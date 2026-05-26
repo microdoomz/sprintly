@@ -13,6 +13,7 @@ export function getPusherClient(): PusherClient | null {
   if (!pusherClient) {
     pusherClient = new PusherClient(key, {
       cluster,
+      authEndpoint: "/api/pusher/auth",
     });
   }
 

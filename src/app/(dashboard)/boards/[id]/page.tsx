@@ -1,8 +1,11 @@
 import { getBoardById } from "@/actions/board-actions";
+import { getTasksForBoard } from "@/actions/task-actions";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Settings, UserPlus, ListFilter } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { KanbanBoard } from "@/components/boards/kanban-board";
+import { BoardSettingsDialog } from "@/components/boards/board-settings-dialog";
 
 export default async function SingleBoardPage({
   params,
@@ -10,9 +13,17 @@ export default async function SingleBoardPage({
   params: Promise<{ id: string }>;
 }) {
   const resolvedParams = await params;
-  const { data: board, error } = await getBoardById(resolvedParams.id);
+  const boardId = resolvedParams.id;
+  
+  const [boardRes, tasksRes] = await Promise.all([
+    getBoardById(boardId),
+    getTasksForBoard(boardId),
+  ]);
 
-  if (error || !board) {
+  const { data: board, error: boardError } = boardRes;
+  const { data: tasks, error: tasksError } = tasksRes;
+
+  if (boardError || !board) {
     notFound();
   }
 
@@ -51,52 +62,12 @@ export default async function SingleBoardPage({
             <ListFilter className="h-4 w-4 mr-2" />
             Filter
           </Button>
-          <Button variant="ghost" size="icon">
-            <Settings className="h-4 w-4" />
-          </Button>
+          <BoardSettingsDialog board={board} />
         </div>
       </div>
 
       <div className="flex-1 min-h-0 bg-muted/30 rounded-xl border border-border p-4 overflow-x-auto">
-        <div className="flex h-full gap-4 min-w-max">
-          {/* Kanban Columns Mock */}
-          <div className="w-80 flex flex-col bg-card rounded-lg border border-border">
-            <div className="p-3 font-semibold border-b border-border flex justify-between items-center">
-              <span>To Do</span>
-              <span className="bg-muted text-muted-foreground text-xs px-2 py-1 rounded-full">3</span>
-            </div>
-            <div className="flex-1 p-2 space-y-2 overflow-y-auto">
-              <div className="bg-background p-3 rounded shadow-sm border border-border text-sm">
-                Design new landing page
-              </div>
-              <div className="bg-background p-3 rounded shadow-sm border border-border text-sm">
-                Set up Better Auth
-              </div>
-            </div>
-          </div>
-
-          <div className="w-80 flex flex-col bg-card rounded-lg border border-border">
-            <div className="p-3 font-semibold border-b border-border flex justify-between items-center">
-              <span>In Progress</span>
-              <span className="bg-muted text-muted-foreground text-xs px-2 py-1 rounded-full">1</span>
-            </div>
-            <div className="flex-1 p-2 space-y-2 overflow-y-auto">
-              <div className="bg-background p-3 rounded shadow-sm border border-border text-sm">
-                Create database schema
-              </div>
-            </div>
-          </div>
-
-          <div className="w-80 flex flex-col bg-card rounded-lg border border-border">
-            <div className="p-3 font-semibold border-b border-border flex justify-between items-center">
-              <span>Done</span>
-              <span className="bg-muted text-muted-foreground text-xs px-2 py-1 rounded-full">0</span>
-            </div>
-            <div className="flex-1 p-2 space-y-2 overflow-y-auto">
-              {/* Empty state */}
-            </div>
-          </div>
-        </div>
+        <KanbanBoard boardId={board.id} initialTasks={tasks || []} />
       </div>
     </div>
   );
