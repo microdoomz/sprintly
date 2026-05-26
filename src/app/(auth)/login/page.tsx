@@ -33,7 +33,22 @@ export default function LoginPage() {
             router.push("/dashboard");
           },
           onError: (ctx) => {
-            toast.error(ctx.error.message || "Failed to log in");
+            const errorMsg = ctx.error.message?.toLowerCase() || "";
+            if (
+              errorMsg.includes("user not found") || 
+              errorMsg.includes("invalid email or password") || 
+              errorMsg.includes("invalid credentials") || 
+              ctx.error.status === 401
+            ) {
+              toast.error("User does not exist.", {
+                action: {
+                  label: "Create Account",
+                  onClick: () => router.push("/register"),
+                },
+              });
+            } else {
+              toast.error(ctx.error.message || "Failed to log in");
+            }
             setIsLoading(false);
           },
         }
