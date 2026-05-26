@@ -18,7 +18,7 @@ export async function checkEmailAuthMethod(email: string) {
     const emailAccount = await db.query.accounts.findFirst({
       where: and(
         eq(accounts.userId, user.id),
-        eq(accounts.providerId, "email")
+        eq(accounts.providerId, "credential")
       )
     });
 

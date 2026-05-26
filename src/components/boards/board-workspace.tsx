@@ -171,8 +171,8 @@ export function BoardWorkspace({ boardId, initialTasks, boardTags = [] }: BoardW
           tasks={filteredAndSortedTasks} 
           setTasks={setTasks}
           boardTags={boardTags}
-          // If filtered, we might want to disable drag-and-drop to avoid position corruption
-          isFiltered={search !== "" || filterPriority !== "all" || filterStatus !== "all" || sortBy !== "position"} 
+          // If filtered (hiding items), we might want to disable drag-and-drop to avoid position corruption
+          isFiltered={search !== "" || filterPriority !== "all" || filterStatus !== "all"} 
         />
       ) : (
         <ListTableView tasks={filteredAndSortedTasks} />

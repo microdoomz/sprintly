@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { boardMembers, tasks } from "@/lib/db/schema";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { CreateBoardDialog } from "@/components/boards/create-board-dialog";
+import { DashboardTiles } from "@/components/dashboard/dashboard-tiles";
 
 function formatTimeAgo(date: Date) {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
@@ -40,18 +41,22 @@ export default async function DashboardPage() {
     },
   });
 
-  const myBoards = memberships.map((bm) => bm.board).filter(Boolean);
+  const myBoards = memberships
+    .map((bm) => bm.board)
+    .filter((b) => b && !b.deletedAt); // Filter out soft-deleted boards
   const totalBoards = myBoards.length;
 
   // 2. Fetch tasks for user boards
-  let inProgressCount = 0;
-  let completedCount = 0;
+  let userTasks: any[] = [];
   let recentTasks: any[] = [];
 
   if (myBoards.length > 0) {
     const boardIds = myBoards.map((b) => b.id);
-    const userTasks = await db.query.tasks.findMany({
-      where: inArray(tasks.boardId, boardIds),
+    userTasks = await db.query.tasks.findMany({
+      where: and(
+        inArray(tasks.boardId, boardIds),
+        isNull(tasks.deletedAt) // Filter out soft-deleted tasks
+      ),
       with: {
         creator: {
           columns: {
@@ -68,8 +73,6 @@ export default async function DashboardPage() {
       orderBy: (tasks, { desc }) => [desc(tasks.createdAt)],
     });
 
-    inProgressCount = userTasks.filter((t) => t.status === "in-progress").length;
-    completedCount = userTasks.filter((t) => t.status === "done").length;
     // Get recent 5 tasks
     recentTasks = userTasks.slice(0, 5);
   }
@@ -91,7 +94,7 @@ export default async function DashboardPage() {
         </CreateBoardDialog>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Boards</CardTitle>
@@ -99,35 +102,14 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalBoards}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               Across your workspaces
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tasks In Progress</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{inProgressCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Needs your attention
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed Tasks</CardTitle>
-            <CheckSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{completedCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Successfully finished
-            </p>
-          </CardContent>
-        </Card>
+        <div className="md:col-span-1 lg:col-span-3">
+          <DashboardTiles tasks={userTasks} />
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
