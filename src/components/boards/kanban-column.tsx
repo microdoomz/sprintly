@@ -12,9 +12,10 @@ interface KanbanColumnProps {
   boardId: string;
   title: string;
   tasks: TaskType[];
+  boardTags?: any[];
 }
 
-export function KanbanColumn({ id, boardId, title, tasks }: KanbanColumnProps) {
+export function KanbanColumn({ id, boardId, title, tasks, boardTags = [] }: KanbanColumnProps) {
   const { setNodeRef } = useDroppable({
     id,
     data: {
@@ -42,7 +43,7 @@ export function KanbanColumn({ id, boardId, title, tasks }: KanbanColumnProps) {
           >
             <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
               {tasks.map((task) => (
-                <TaskCard key={task.id} task={task} />
+                <TaskCard key={task.id} task={task} boardTags={boardTags} />
               ))}
             </SortableContext>
           </div>

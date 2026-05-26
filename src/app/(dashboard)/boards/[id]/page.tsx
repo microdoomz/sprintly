@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getBoardById } from "@/actions/board-actions";
 import { getTasksForBoard } from "@/actions/task-actions";
 import { notFound } from "next/navigation";
@@ -6,6 +8,7 @@ import { UserPlus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BoardWorkspace } from "@/components/boards/board-workspace";
 import { BoardSettingsDialog } from "@/components/boards/board-settings-dialog";
+import { ShareBoardDialog } from "@/components/boards/share-board-dialog";
 
 export default async function SingleBoardPage({
   params,
@@ -43,27 +46,24 @@ export default async function SingleBoardPage({
         </div>
         
         <div className="flex items-center gap-2">
-          {/* Members (Mock UI for MVP) */}
+          {/* Members */}
           <div className="flex -space-x-2 mr-4">
-            <Avatar className="h-8 w-8 border-2 border-background">
-              <AvatarImage src="" />
-              <AvatarFallback className="text-xs">U1</AvatarFallback>
-            </Avatar>
-            <Avatar className="h-8 w-8 border-2 border-background">
-              <AvatarImage src="" />
-              <AvatarFallback className="text-xs">U2</AvatarFallback>
-            </Avatar>
+            {board.members?.map((member: any) => (
+              <Avatar key={member.id} className="h-8 w-8 border-2 border-background" title={member.user.name}>
+                <AvatarImage src={member.user.image || ""} />
+                <AvatarFallback className="text-xs bg-primary/20 text-primary">
+                  {member.user.name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            ))}
           </div>
           
-          <Button variant="outline" size="sm" className="hidden sm:flex">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Share
-          </Button>
+          <ShareBoardDialog board={board} />
           <BoardSettingsDialog board={board} />
         </div>
       </div>
 
-      <BoardWorkspace boardId={board.id} initialTasks={tasksData.data || []} />
+      <BoardWorkspace boardId={board.id} boardTags={board.tags || []} initialTasks={tasksData.data || []} />
     </div>
   );
 }

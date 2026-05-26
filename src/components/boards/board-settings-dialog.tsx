@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,10 +16,10 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Settings, Trash2 } from "lucide-react";
-// Assuming an action updateBoard & deleteBoard exists in board-actions.ts
-// import { updateBoard, deleteBoard } from "@/actions/board-actions";
+import { updateBoard, deleteBoard } from "@/actions/board-actions";
 
 export function BoardSettingsDialog({ board }: { board: any }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState(board.title);
@@ -26,19 +27,36 @@ export function BoardSettingsDialog({ board }: { board: any }) {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    // TODO: Connect to updateBoard server action
-    toast.success("Board updated successfully (Mock)");
-    setIsLoading(false);
-    setOpen(false);
+    if (!title) return;
+    try {
+      setIsLoading(true);
+      const res = await updateBoard(board.id, { title, description });
+      if (res.error) throw new Error(res.error);
+      toast.success("Board updated successfully!");
+      setOpen(false);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update board");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDelete = async () => {
-    setIsLoading(true);
-    // TODO: Connect to deleteBoard server action
-    toast.success("Board deleted (Mock)");
-    setIsLoading(false);
-    setOpen(false);
+    const confirmDelete = window.confirm("Are you sure you want to delete this board? This action is reversible.");
+    if (!confirmDelete) return;
+
+    try {
+      setIsLoading(true);
+      const res = await deleteBoard(board.id);
+      if (res.error) throw new Error(res.error);
+      toast.success("Board deleted successfully!");
+      setOpen(false);
+      router.push("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete board");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

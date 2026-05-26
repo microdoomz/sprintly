@@ -36,6 +36,7 @@ export function CreateTaskDialog({ boardId, status, children }: CreateTaskDialog
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
+  const [dueDate, setDueDate] = useState("");
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +50,7 @@ export function CreateTaskDialog({ boardId, status, children }: CreateTaskDialog
         description,
         status,
         priority,
+        dueDate: dueDate ? new Date(dueDate) : undefined,
       });
 
       if (res.error) throw new Error(res.error);
@@ -58,6 +60,7 @@ export function CreateTaskDialog({ boardId, status, children }: CreateTaskDialog
       setTitle("");
       setDescription("");
       setPriority("medium");
+      setDueDate("");
     } catch (error: any) {
       toast.error(error.message || "Failed to create task");
     } finally {
@@ -116,6 +119,16 @@ export function CreateTaskDialog({ boardId, status, children }: CreateTaskDialog
                   <SelectItem value="urgent">Urgent</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="dueDate">Due Date (Optional)</Label>
+              <Input
+                id="dueDate"
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                disabled={isLoading}
+              />
             </div>
           </div>
           <DialogFooter>

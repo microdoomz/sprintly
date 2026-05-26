@@ -22,15 +22,16 @@ import {
 interface BoardWorkspaceProps {
   boardId: string;
   initialTasks: TaskType[];
+  boardTags?: any[];
 }
 
-export function BoardWorkspace({ boardId, initialTasks }: BoardWorkspaceProps) {
+export function BoardWorkspace({ boardId, initialTasks, boardTags = [] }: BoardWorkspaceProps) {
   const [tasks, setTasks] = useState<TaskType[]>(initialTasks);
   const [view, setView] = useState<"kanban" | "list">("kanban");
   const [search, setSearch] = useState("");
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"position" | "newest" | "priority">("position");
+  const [sortBy, setSortBy] = useState<"position" | "newest" | "priority">("priority");
 
   // Sync state if initial tasks change from server
   useEffect(() => {
@@ -91,9 +92,14 @@ export function BoardWorkspace({ boardId, initialTasks }: BoardWorkspaceProps) {
       result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     } else if (sortBy === "priority") {
       const priorityWeights: Record<string, number> = { urgent: 4, high: 3, medium: 2, low: 1 };
-      result.sort((a, b) => (priorityWeights[b.priority] || 0) - (priorityWeights[a.priority] || 0));
+      result.sort((a, b) => {
+        const weightA = priorityWeights[a.priority] || 0;
+        const weightB = priorityWeights[b.priority] || 0;
+        if (weightB !== weightA) return weightB - weightA;
+        return a.position - b.position;
+      });
     } else {
-      // position sort is default
+      // position sort
       result.sort((a, b) => a.position - b.position);
     }
 
@@ -164,6 +170,7 @@ export function BoardWorkspace({ boardId, initialTasks }: BoardWorkspaceProps) {
           boardId={boardId} 
           tasks={filteredAndSortedTasks} 
           setTasks={setTasks}
+          boardTags={boardTags}
           // If filtered, we might want to disable drag-and-drop to avoid position corruption
           isFiltered={search !== "" || filterPriority !== "all" || filterStatus !== "all" || sortBy !== "position"} 
         />

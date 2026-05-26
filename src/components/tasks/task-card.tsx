@@ -30,9 +30,10 @@ export interface TaskType {
 
 interface TaskCardProps {
   task: TaskType;
+  boardTags?: any[];
 }
 
-export function TaskCard({ task }: TaskCardProps) {
+export function TaskCard({ task, boardTags = [] }: TaskCardProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const {
@@ -139,6 +140,7 @@ export function TaskCard({ task }: TaskCardProps) {
         boardId={task.boardId}
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
+        boardTags={boardTags}
       />
     </>
   );
