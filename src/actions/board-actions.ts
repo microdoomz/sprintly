@@ -17,24 +17,26 @@ export async function createBoard(data: { title: string; description?: string; c
       return { error: "Unauthorized" };
     }
 
-    const newBoard = await db.transaction(async (tx) => {
-      // 1. Create the board
-      const [board] = await tx.insert(boards).values({
-        title: data.title,
-        description: data.description || null,
-        coverColor: data.coverColor || "#8B5CF6",
-        ownerId: session.user.id,
-      }).returning();
+    // 1. Create the board
+    const [board] = await db.insert(boards).values({
+      title: data.title,
+      description: data.description || null,
+      coverColor: data.coverColor || "#8B5CF6",
+      ownerId: session.user.id,
+    }).returning();
 
-      // 2. Add creator as a board member with 'owner' role
-      await tx.insert(boardMembers).values({
-        boardId: board.id,
-        userId: session.user.id,
-        role: "owner",
-      });
+    if (!board) {
+      throw new Error("Failed to create board record");
+    }
 
-      return board;
+    // 2. Add creator as a board member with 'owner' role
+    await db.insert(boardMembers).values({
+      boardId: board.id,
+      userId: session.user.id,
+      role: "owner",
     });
+
+    const newBoard = board;
 
     revalidatePath("/boards");
     revalidatePath("/dashboard");
