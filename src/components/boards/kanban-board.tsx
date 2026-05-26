@@ -22,7 +22,8 @@ import { toast } from "sonner";
 
 interface KanbanBoardProps {
   boardId: string;
-  initialTasks: TaskType[];
+  tasks: TaskType[];
+  isFiltered?: boolean;
 }
 
 const COLUMNS = [
@@ -31,48 +32,8 @@ const COLUMNS = [
   { id: "done", title: "Done" },
 ];
 
-export function KanbanBoard({ boardId, initialTasks }: KanbanBoardProps) {
-  const [tasks, setTasks] = useState<TaskType[]>(initialTasks);
+export function KanbanBoard({ boardId, tasks, isFiltered = false }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
-
-  // Sync state if initial tasks change from server
-  useEffect(() => {
-    setTasks(initialTasks);
-  }, [initialTasks]);
-
-  // Realtime Pusher Subscriptions
-  useEffect(() => {
-    const pusher = getPusherClient();
-    if (!pusher) return;
-
-    const channel = pusher.subscribe(`private-board-${boardId}`);
-
-    channel.bind("task-created", (data: { task: TaskType }) => {
-      setTasks((current) => {
-        if (current.some(t => t.id === data.task.id)) return current;
-        return [...current, data.task];
-      });
-    });
-
-    channel.bind("task-moved", (data: { taskId: string; newStatus: string; newPosition: number }) => {
-      setTasks((current) => 
-        current.map(t => 
-          t.id === data.taskId 
-            ? { ...t, status: data.newStatus, position: data.newPosition } 
-            : t
-        ).sort((a, b) => a.position - b.position)
-      );
-    });
-
-    channel.bind("task-deleted", (data: { taskId: string }) => {
-      setTasks((current) => current.filter(t => t.id !== data.taskId));
-    });
-
-    return () => {
-      channel.unbind_all();
-      pusher.unsubscribe(`private-board-${boardId}`);
-    };
-  }, [boardId]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -178,7 +139,7 @@ export function KanbanBoard({ boardId, initialTasks }: KanbanBoardProps) {
 
   return (
     <DndContext
-      sensors={sensors}
+      sensors={isFiltered ? [] : sensors}
       collisionDetection={closestCorners}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}

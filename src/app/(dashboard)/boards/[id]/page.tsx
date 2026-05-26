@@ -2,9 +2,9 @@ import { getBoardById } from "@/actions/board-actions";
 import { getTasksForBoard } from "@/actions/task-actions";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Settings, UserPlus, ListFilter } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { KanbanBoard } from "@/components/boards/kanban-board";
+import { BoardWorkspace } from "@/components/boards/board-workspace";
 import { BoardSettingsDialog } from "@/components/boards/board-settings-dialog";
 
 export default async function SingleBoardPage({
@@ -14,61 +14,56 @@ export default async function SingleBoardPage({
 }) {
   const resolvedParams = await params;
   const boardId = resolvedParams.id;
+
+  const { data: board, error: boardError } = await getBoardById(boardId);
   
-  const [boardRes, tasksRes] = await Promise.all([
-    getBoardById(boardId),
-    getTasksForBoard(boardId),
-  ]);
-
-  const { data: board, error: boardError } = boardRes;
-  const { data: tasks, error: tasksError } = tasksRes;
-
   if (boardError || !board) {
     notFound();
   }
 
+  const tasksData = await getTasksForBoard(boardId);
+
   return (
-    <div className="flex flex-col h-[calc(100vh-theme(spacing.32))] space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="flex flex-col h-full space-y-4">
+      {/* Board Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b">
         <div className="flex items-center gap-4">
           <div 
-            className="w-4 h-8 rounded-sm" 
-            style={{ backgroundColor: board.coverColor || '#8B5CF6' }} 
-          />
+            className="w-8 h-8 rounded flex items-center justify-center text-white font-bold"
+            style={{ backgroundColor: board.coverColor || '#7C3AED' }}
+          >
+            {board.icon || board.title.charAt(0).toUpperCase()}
+          </div>
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">{board.title}</h2>
+            <h1 className="text-2xl font-bold tracking-tight">{board.title}</h1>
             {board.description && (
               <p className="text-sm text-muted-foreground">{board.description}</p>
             )}
           </div>
         </div>
-
+        
         <div className="flex items-center gap-2">
+          {/* Members (Mock UI for MVP) */}
           <div className="flex -space-x-2 mr-4">
-            {board.members.map((member) => (
-              <Avatar key={member.user.id} className="h-8 w-8 border-2 border-background">
-                <AvatarImage src={member.user.image || ""} />
-                <AvatarFallback className="bg-primary/20 text-primary text-xs">
-                  {member.user.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-            ))}
+            <Avatar className="h-8 w-8 border-2 border-background">
+              <AvatarImage src="" />
+              <AvatarFallback className="text-xs">U1</AvatarFallback>
+            </Avatar>
+            <Avatar className="h-8 w-8 border-2 border-background">
+              <AvatarImage src="" />
+              <AvatarFallback className="text-xs">U2</AvatarFallback>
+            </Avatar>
           </div>
+          
           <Button variant="outline" size="sm" className="hidden sm:flex">
             <UserPlus className="h-4 w-4 mr-2" />
             Share
-          </Button>
-          <Button variant="outline" size="sm">
-            <ListFilter className="h-4 w-4 mr-2" />
-            Filter
           </Button>
           <BoardSettingsDialog board={board} />
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 bg-muted/30 rounded-xl border border-border p-4 overflow-x-auto">
-        <KanbanBoard boardId={board.id} initialTasks={tasks || []} />
-      </div>
+      <BoardWorkspace boardId={board.id} initialTasks={tasksData.data || []} />
     </div>
   );
 }
