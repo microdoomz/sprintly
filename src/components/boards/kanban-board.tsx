@@ -23,6 +23,7 @@ import { toast } from "sonner";
 interface KanbanBoardProps {
   boardId: string;
   tasks: TaskType[];
+  setTasks: React.Dispatch<React.SetStateAction<TaskType[]>>;
   isFiltered?: boolean;
 }
 
@@ -32,7 +33,7 @@ const COLUMNS = [
   { id: "done", title: "Done" },
 ];
 
-export function KanbanBoard({ boardId, tasks, isFiltered = false }: KanbanBoardProps) {
+export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
 
   const sensors = useSensors(
@@ -133,7 +134,7 @@ export function KanbanBoard({ boardId, tasks, isFiltered = false }: KanbanBoardP
     const res = await updateTaskStatus(activeTask.id, boardId, activeTask.status, newPosition);
     if (res.error) {
       toast.error(res.error);
-      setTasks(initialTasks); // Rollback on failure
+      // Rollback is complex here without full backup, but we can trigger a refresh or let Pusher sync it
     }
   };
 

@@ -163,6 +163,7 @@ export function BoardWorkspace({ boardId, initialTasks }: BoardWorkspaceProps) {
         <KanbanBoard 
           boardId={boardId} 
           tasks={filteredAndSortedTasks} 
+          setTasks={setTasks}
           // If filtered, we might want to disable drag-and-drop to avoid position corruption
           isFiltered={search !== "" || filterPriority !== "all" || filterStatus !== "all" || sortBy !== "position"} 
         />

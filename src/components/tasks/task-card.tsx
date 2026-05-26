@@ -17,6 +17,8 @@ export interface TaskType {
   priority: string;
   dueDate: Date | null;
   position: number;
+  createdAt: Date;
+  updatedAt: Date;
   subtasks: any[];
   taskTags: any[];
   creator: {
