@@ -19,7 +19,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     passwordReset: {
-      async sendResetPassword({ url, user }) {
+      async sendResetPassword({ url, user }: { url: string; user: any }) {
         try {
         await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL || "Sprintly <onboarding@resend.dev>",
