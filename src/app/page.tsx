@@ -21,12 +21,12 @@ export default function Home() {
             <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
           </div>
           <div className="flex items-center gap-4">
-            <TransitionLink href="/login" variant="link" className="text-sm font-medium text-white/70 hover:text-white transition-colors px-0">
+            <Link href="/login" className="text-sm font-medium text-white/70 hover:text-white transition-colors px-0">
               Log In
-            </TransitionLink>
-            <TransitionLink href="/register" size="sm" className="rounded-full bg-white text-black hover:bg-white/90">
+            </Link>
+            <Link href="/register" className="h-9 px-4 py-2 inline-flex items-center justify-center whitespace-nowrap rounded-full bg-white text-black hover:bg-white/90 text-sm font-medium transition-colors">
               Get Started
-            </TransitionLink>
+            </Link>
           </div>
         </div>
       </nav>
@@ -48,12 +48,12 @@ export default function Home() {
             Sprintly brings your team&apos;s tasks, boards, and goals into one unified, beautiful workspace. Built for modern teams who demand performance and aesthetics.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <TransitionLink href="/register" size="lg" className="rounded-full h-14 px-8 text-base bg-white text-black hover:bg-white/90 shadow-lg shadow-white/10 transition-all hover:scale-105 font-medium">
+            <Link href="/register" className="inline-flex items-center justify-center whitespace-nowrap rounded-full h-14 px-8 text-base bg-white text-black hover:bg-white/90 shadow-lg shadow-white/10 transition-all hover:scale-105 font-medium">
               Start for free <ArrowRight className="ml-2 h-4 w-4" />
-            </TransitionLink>
-            <TransitionLink href="/login" size="lg" variant="outline" className="rounded-full h-14 px-8 text-base border-white/10 bg-white/5 backdrop-blur-xl hover:bg-white/10 text-white transition-all font-medium">
+            </Link>
+            <Link href="/login" className="inline-flex items-center justify-center whitespace-nowrap rounded-full h-14 px-8 text-base border border-white/10 bg-white/5 backdrop-blur-xl hover:bg-white/10 text-white transition-all font-medium">
               Sign in
-            </TransitionLink>
+            </Link>
           </div>
         </div>
 

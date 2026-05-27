@@ -159,6 +159,8 @@ export async function updateTaskStatus(taskId: string, boardId: string, newStatu
 
     // Revalidate asynchronously to avoid blocking the drag-and-drop response
     revalidatePath(`/boards/${boardId}`);
+    revalidatePath(`/dashboard`);
+    revalidatePath(`/boards`);
     return { success: true };
   } catch (error: any) {
     return { error: error.message || "Failed to update task" };
@@ -262,6 +264,8 @@ export async function updateTask(taskId: string, boardId: string, data: {
     });
 
     revalidatePath(`/boards/${boardId}`);
+    revalidatePath(`/dashboard`);
+    revalidatePath(`/boards`);
     return { data: fullTask || updatedTask };
   } catch (error: any) {
     return { error: error.message || "Failed to update task" };
