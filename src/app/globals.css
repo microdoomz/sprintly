@@ -90,13 +90,13 @@
 
   .light, [data-theme="light"] {
     color-scheme: light;
-    --background: #f8fafc;
+    --background: #f0fdfa; /* teal-50 */
     --foreground: #0f172a;
     --surface: #ffffff;
-    --surface-hover: #f1f5f9;
-    --surface-active: #e2e8f0;
-    --border: #e2e8f0;
-    --border-hover: #cbd5e1;
+    --surface-hover: #ccfbf1; /* teal-100 */
+    --surface-active: #99f6e4; /* teal-200 */
+    --border: #ccfbf1;
+    --border-hover: #99f6e4;
     --primary: #14b8a6;
     --primary-hover: #0f766e;
     --primary-foreground: #FFFFFF;

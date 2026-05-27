@@ -5,9 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, CheckSquare, Settings, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, CheckSquare, Settings, LogOut, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { signOut } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const routes = [
   {
@@ -34,6 +35,17 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [pendingRoute, setPendingRoute] = useState<string | null>(null);
+
+  const handleNavigation = (href: string) => {
+    if (pathname === href) return;
+    setPendingRoute(href);
+    router.push(href);
+  };
+
+  useEffect(() => {
+    setPendingRoute(null);
+  }, [pathname]);
 
   const handleLogout = async () => {
     await signOut({
@@ -84,21 +96,29 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
         <div className="space-y-1">
           {routes.map((route) => {
             const isActive = pathname === route.href || pathname.startsWith(`${route.href}/`);
+            const isPendingRoute = pendingRoute === route.href;
+            
             return (
-              <Link
+              <button
                 key={route.href}
-                href={route.href}
+                onClick={() => handleNavigation(route.href)}
+                disabled={isPendingRoute}
                 className={cn(
                   "text-sm group flex p-3 w-full font-medium cursor-pointer rounded-lg transition hover:text-primary hover:bg-primary/10",
                   isActive ? "text-primary bg-primary/10" : "text-muted-foreground",
-                  (!isMobile && isCollapsed) ? "justify-center" : "justify-start"
+                  (!isMobile && isCollapsed) ? "justify-center" : "justify-start",
+                  isPendingRoute ? "opacity-70 pointer-events-none" : ""
                 )}
               >
                 <div className={cn("flex items-center", (!isMobile && isCollapsed) ? "justify-center" : "flex-1")}>
-                  <route.icon className={cn("h-5 w-5 shrink-0 transition-all duration-300", (!isMobile && isCollapsed) ? "" : "mr-3", route.color)} />
+                  {isPendingRoute ? (
+                    <Loader2 className={cn("h-5 w-5 shrink-0 animate-spin", (!isMobile && isCollapsed) ? "" : "mr-3", route.color)} />
+                  ) : (
+                    <route.icon className={cn("h-5 w-5 shrink-0 transition-all duration-300", (!isMobile && isCollapsed) ? "" : "mr-3", route.color)} />
+                  )}
                   {(isMobile || !isCollapsed) && <span className="truncate">{route.label}</span>}
                 </div>
-              </Link>
+              </button>
             );
           })}
         </div>

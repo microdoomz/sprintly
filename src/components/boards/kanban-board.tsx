@@ -154,7 +154,7 @@ export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boar
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex h-full gap-4 min-w-max pb-4">
+      <div className="flex flex-col md:flex-row h-full gap-4 md:min-w-max pb-4">
         {COLUMNS.map((col) => (
           <KanbanColumn
             key={col.id}

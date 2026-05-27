@@ -100,50 +100,7 @@ export default function Home() {
           </div>
         </div>
         
-        {/* App Preview Mockup */}
-        <div className="mx-auto max-w-5xl mt-32 relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-teal-500/20 via-cyan-500/10 to-transparent blur-3xl -z-10" />
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-2 sm:p-4 backdrop-blur-3xl shadow-2xl shadow-black/80">
-            <div className="rounded-xl sm:rounded-2xl overflow-hidden border border-white/5 bg-black/60 shadow-inner">
-              {/* Fake App Header */}
-              <div className="h-12 border-b border-white/5 bg-white/5 flex items-center px-4 gap-2 backdrop-blur-sm">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]" />
-                </div>
-                <div className="mx-auto flex items-center gap-2 px-3 py-1.5 bg-black/30 rounded-md text-xs text-white/50 border border-white/5 shadow-inner">
-                  <Layout className="w-3 h-3" />
-                  sprintly.app
-                </div>
-              </div>
-              {/* Fake App Body */}
-              <div className="h-[300px] sm:h-[500px] flex p-4 sm:p-6 gap-6 relative bg-gradient-to-br from-black to-neutral-900/50">
-                 <div className="w-48 hidden sm:flex flex-col gap-3">
-                    <div className="h-8 rounded-md bg-white/5 w-full border border-white/5" />
-                    <div className="h-8 rounded-md bg-white/5 w-3/4 border border-white/5" />
-                    <div className="h-8 rounded-md bg-white/5 w-5/6 border border-white/5" />
-                 </div>
-                 <div className="flex-1 flex gap-4 overflow-hidden">
-                    <div className="flex-1 flex flex-col gap-3">
-                      <div className="h-6 w-24 bg-white/10 rounded-md mb-2" />
-                      <div className="h-24 bg-white/5 border border-white/5 rounded-xl shadow-lg" />
-                      <div className="h-32 bg-white/5 border border-white/5 rounded-xl shadow-lg" />
-                    </div>
-                    <div className="flex-1 flex flex-col gap-3">
-                      <div className="h-6 w-24 bg-white/10 rounded-md mb-2" />
-                      <div className="h-40 bg-white/5 border border-white/5 rounded-xl shadow-lg" />
-                      <div className="h-20 bg-white/5 border border-white/5 rounded-xl shadow-lg" />
-                    </div>
-                    <div className="flex-1 flex flex-col gap-3 hidden md:flex">
-                      <div className="h-6 w-24 bg-white/10 rounded-md mb-2" />
-                      <div className="h-28 bg-white/5 border border-white/5 rounded-xl shadow-lg" />
-                    </div>
-                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+
       </main>
     </div>
   );
