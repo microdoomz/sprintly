@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
@@ -38,8 +39,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <GlobalLoader />
-          <Prefetcher />
+          <Suspense fallback={null}>
+            <GlobalLoader />
+            <Prefetcher />
+          </Suspense>
           {/* Dynamic Animated Background - Global */}
           <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-background">
             <div className="absolute -top-[25%] -left-[10%] w-[50%] h-[50%] bg-teal-600/10 blur-[120px] rounded-full animate-pulse-slow dark:mix-blend-screen" />

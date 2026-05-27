@@ -13,6 +13,8 @@ import {
   DragStartEvent,
   DragEndEvent,
   DragOverEvent,
+  defaultDropAnimationSideEffects,
+  DropAnimation,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates, arrayMove } from "@dnd-kit/sortable";
 import { KanbanColumn } from "./kanban-column";
@@ -35,6 +37,16 @@ const COLUMNS = [
   { id: "in-progress", title: "In Progress" },
   { id: "done", title: "Done" },
 ];
+
+const dropAnimation: DropAnimation = {
+  sideEffects: defaultDropAnimationSideEffects({
+    styles: {
+      active: {
+        opacity: "0.5",
+      },
+    },
+  }),
+};
 
 export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boardTags = [], boardColor }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
@@ -175,9 +187,9 @@ export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boar
         ))}
       </div>
 
-      <DragOverlay dropAnimation={null}>
+      <DragOverlay dropAnimation={dropAnimation}>
         {activeTask ? (
-          <div className="opacity-90 shadow-2xl rotate-2 scale-105 transition-transform cursor-grabbing">
+          <div className="opacity-100 shadow-2xl rotate-2 scale-105 transition-transform cursor-grabbing">
             <TaskCard task={activeTask} boardTags={boardTags} boardColor={boardColor} />
           </div>
         ) : null}
