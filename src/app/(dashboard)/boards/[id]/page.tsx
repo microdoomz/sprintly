@@ -67,7 +67,7 @@ async function BoardContent({ boardId }: { boardId: string }) {
         </div>
       </div>
 
-      <BoardWorkspace boardId={board.id} boardTags={board.tags || []} initialTasks={tasksData.data || []} boardColor={board.coverColor} />
+      <BoardWorkspace key={board.id} boardId={board.id} boardTags={board.tags || []} initialTasks={tasksData.data || []} boardColor={board.coverColor} />
     </div>
   );
 }

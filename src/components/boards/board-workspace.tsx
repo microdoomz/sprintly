@@ -39,11 +39,6 @@ export function BoardWorkspace({ boardId, initialTasks, boardTags = [], boardCol
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"position" | "newest" | "priority">("priority");
 
-  // Sync state if initial tasks change from server
-  useEffect(() => {
-    setTasks(initialTasks);
-  }, [initialTasks]);
-
   // Realtime Pusher Subscriptions
   useEffect(() => {
     const pusher = getPusherClient();
