@@ -68,7 +68,7 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
                 Sprintly
               </h1>
             )}
-          </Link>
+          </SmartLink>
 
           {!isMobile && (
             <Button

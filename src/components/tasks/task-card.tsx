@@ -79,7 +79,12 @@ export function TaskCard({ task, boardTags = [], boardColor }: TaskCardProps) {
 
   return (
     <>
-      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <div 
+        ref={setNodeRef} 
+        style={{ ...style, touchAction: "none" }} 
+        {...attributes} 
+        {...listeners}
+      >
         <Card 
           className="cursor-grab hover:ring-2 hover:ring-primary/50 hover:shadow-md transition-all active:cursor-grabbing overflow-hidden"
           style={boardColor ? { borderLeft: `4px solid ${boardColor}` } : {}}

@@ -64,7 +64,7 @@ export default function LoginPage() {
             toast.success("Logged in successfully!");
             router.push("/dashboard");
           },
-          onError: (ctx) => {
+          onError: (ctx: any) => {
             toast.error("Incorrect password. Please try again.");
             setIsLoading(false);
           },

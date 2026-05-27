@@ -70,7 +70,7 @@ async function BoardsContent() {
                   </div>
                 </CardContent>
               </Card>
-            </Link>
+            </SmartLink>
           ))}
         </div>
       )}

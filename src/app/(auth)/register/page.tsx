@@ -65,7 +65,7 @@ export default function RegisterPage() {
             toast.success("Account created successfully!");
             router.push("/dashboard");
           },
-          onError: (ctx) => {
+          onError: (ctx: any) => {
             toast.error(ctx.error.message || "Failed to create account");
             setIsLoading(false);
           },
