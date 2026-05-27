@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createTask } from "@/actions/task-actions";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 
 interface CreateTaskDialogProps {
   boardId: string;
@@ -136,7 +136,14 @@ export function CreateTaskDialog({ boardId, status, children }: CreateTaskDialog
               Cancel
             </Button>
             <Button type="submit" disabled={isLoading || !title}>
-              {isLoading ? "Creating..." : "Create Task"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Create Task"
+              )}
             </Button>
           </DialogFooter>
         </form>

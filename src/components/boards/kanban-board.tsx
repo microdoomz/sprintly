@@ -107,36 +107,42 @@ export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boar
 
     if (activeId === overId) return;
 
-    const activeTaskIndex = tasks.findIndex((t) => t.id === activeId);
-    if (activeTaskIndex === -1) return;
-
-    const activeTask = tasks[activeTaskIndex];
     let newPosition = 0;
+    let finalTask: TaskType | null = null;
 
-    // Calculate new position based on neighbors
-    const tasksInColumn = tasks.filter((t) => t.status === activeTask.status);
-    const columnIdx = tasksInColumn.findIndex((t) => t.id === activeId);
+    setTasks((currentTasks) => {
+      const activeTaskIndex = currentTasks.findIndex((t) => t.id === activeId);
+      if (activeTaskIndex === -1) return currentTasks;
 
-    if (tasksInColumn.length === 1) {
-      newPosition = 1024;
-    } else if (columnIdx === 0) {
-      newPosition = tasksInColumn[1].position / 2;
-    } else if (columnIdx === tasksInColumn.length - 1) {
-      newPosition = tasksInColumn[columnIdx - 1].position + 1024;
-    } else {
-      newPosition = (tasksInColumn[columnIdx - 1].position + tasksInColumn[columnIdx + 1].position) / 2;
-    }
+      const activeTask = currentTasks[activeTaskIndex];
+      finalTask = activeTask;
 
-    // Optimistically update state position
-    const updatedTasks = [...tasks];
-    updatedTasks[activeTaskIndex].position = newPosition;
-    setTasks(updatedTasks);
+      // Calculate new position based on neighbors
+      const tasksInColumn = currentTasks.filter((t) => t.status === activeTask.status);
+      const columnIdx = tasksInColumn.findIndex((t) => t.id === activeId);
 
-    // Call server action
-    const res = await updateTaskStatus(activeTask.id, boardId, activeTask.status, newPosition);
-    if (res.error) {
-      toast.error(res.error);
-      // Rollback is complex here without full backup, but we can trigger a refresh or let Pusher sync it
+      if (tasksInColumn.length === 1) {
+        newPosition = 1024;
+      } else if (columnIdx === 0) {
+        newPosition = tasksInColumn[1].position / 2;
+      } else if (columnIdx === tasksInColumn.length - 1) {
+        newPosition = tasksInColumn[columnIdx - 1].position + 1024;
+      } else {
+        newPosition = (tasksInColumn[columnIdx - 1].position + tasksInColumn[columnIdx + 1].position) / 2;
+      }
+
+      // Optimistically update state position
+      const updatedTasks = [...currentTasks];
+      updatedTasks[activeTaskIndex] = { ...activeTask, position: newPosition };
+      return updatedTasks;
+    });
+
+    if (finalTask) {
+      // Call server action
+      const res = await updateTaskStatus((finalTask as TaskType).id, boardId, (finalTask as TaskType).status, newPosition);
+      if (res.error) {
+        toast.error(res.error);
+      }
     }
   };
 
@@ -165,7 +171,7 @@ export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boar
       <DragOverlay dropAnimation={null}>
         {activeTask ? (
           <div className="opacity-90 shadow-2xl rotate-2 scale-105 transition-transform cursor-grabbing">
-            <TaskCard task={activeTask} boardTags={boardTags} />
+            <TaskCard task={activeTask} boardTags={boardTags} boardColor={boardColor} />
           </div>
         ) : null}
       </DragOverlay>

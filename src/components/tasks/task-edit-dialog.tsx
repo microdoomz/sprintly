@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SubtaskList } from "./subtask-list";
 import { TagSelector } from "./tag-selector";
-import { Trash2, Calendar, User, Edit2, Save, X } from "lucide-react";
+import { Trash2, Calendar, User, Edit2, Save, X, Loader2 } from "lucide-react";
 import { deleteTask, updateTask } from "@/actions/task-actions";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -236,8 +236,8 @@ export function TaskEditDialog({ task, boardId, open, onOpenChange, boardTags = 
                     onClick={handleSave}
                     disabled={isSaving}
                   >
-                    <Save className="h-4 w-4 mr-2" />
-                    Save
+                    {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                    {isSaving ? "Saving..." : "Save"}
                   </Button>
                   <Button 
                     variant="outline" 
@@ -263,8 +263,8 @@ export function TaskEditDialog({ task, boardId, open, onOpenChange, boardTags = 
                 disabled={isDeleting || isSaving}
                 size="sm"
               >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Task
+                {isDeleting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 mr-2" />}
+                {isDeleting ? "Deleting..." : "Delete Task"}
               </Button>
             </div>
           </div>

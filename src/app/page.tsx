@@ -14,6 +14,11 @@ export default function Home() {
             </div>
             <span className="font-semibold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/70">Sprintly</span>
           </div>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <Link href="#features" className="hover:text-white transition-colors">Features</Link>
+            <Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link>
+          </div>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-sm font-medium text-white/70 hover:text-white transition-colors">
               Log In
@@ -54,7 +59,7 @@ export default function Home() {
         </div>
 
         {/* Feature Grid - Liquid Glass Cards */}
-        <div className="mx-auto max-w-7xl mt-32 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div id="features" className="mx-auto max-w-7xl mt-32 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 hover:bg-white/10 transition-all duration-500 hover:-translate-y-1 shadow-2xl shadow-black/50 group">
             <div className="h-12 w-12 rounded-2xl bg-teal-500/10 flex items-center justify-center mb-6 border border-teal-500/20 group-hover:bg-teal-500/20 transition-colors">
               <LayoutDashboard className="h-6 w-6 text-teal-300" />

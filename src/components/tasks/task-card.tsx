@@ -31,9 +31,10 @@ export interface TaskType {
 interface TaskCardProps {
   task: TaskType;
   boardTags?: any[];
+  boardColor?: string | null;
 }
 
-export function TaskCard({ task, boardTags = [] }: TaskCardProps) {
+export function TaskCard({ task, boardTags = [], boardColor }: TaskCardProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const {
@@ -80,7 +81,8 @@ export function TaskCard({ task, boardTags = [] }: TaskCardProps) {
     <>
       <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
         <Card 
-          className="cursor-grab hover:ring-2 hover:ring-primary/50 hover:shadow-md transition-all active:cursor-grabbing"
+          className="cursor-grab hover:ring-2 hover:ring-primary/50 hover:shadow-md transition-all active:cursor-grabbing overflow-hidden"
+          style={boardColor ? { borderLeft: `4px solid ${boardColor}` } : {}}
           onClick={() => setIsEditDialogOpen(true)}
         >
         <CardContent className="p-4 flex flex-col gap-3">

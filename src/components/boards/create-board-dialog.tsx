@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -113,7 +114,14 @@ export function CreateBoardDialog({ children }: { children: React.ReactNode }) {
               Cancel
             </Button>
             <Button type="submit" disabled={isLoading || !title}>
-              {isLoading ? "Creating..." : "Create Board"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Create Board"
+              )}
             </Button>
           </DialogFooter>
         </form>

@@ -150,32 +150,40 @@ export function DashboardTiles({ tasks, boards = [] }: DashboardTilesProps) {
           </DialogHeader>
 
           <ScrollArea className="flex-1 pr-4 py-4 min-h-[300px]">
-            {activeTasks.length === 0 ? (
+            {activeTab === "boards" ? (
+              boards.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+                  <Folder className="h-10 w-10 opacity-30 mb-2" />
+                  <p className="text-sm font-medium">No boards found</p>
+                  <p className="text-xs">You have no active boards currently.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {boards.map((board) => (
+                    <div 
+                      key={board.id} 
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/40 transition gap-4"
+                    >
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
+                          <span className="font-semibold text-sm leading-tight text-foreground truncate block">
+                            {board.title}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span className="truncate">{board.description || "No description provided."}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
+            ) : activeTasks.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
                 <CheckSquare className="h-10 w-10 opacity-30 mb-2" />
                 <p className="text-sm font-medium">No tasks found</p>
                 <p className="text-xs">There are no tasks with this status currently.</p>
-              </div>
-            ) : activeTab === "boards" ? (
-              <div className="space-y-4">
-                {boards.map((board) => (
-                  <div 
-                    key={board.id} 
-                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/40 transition gap-4"
-                  >
-                    <div className="space-y-1.5 flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
-                        <span className="font-semibold text-sm leading-tight text-foreground truncate block">
-                          {board.title}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span className="truncate">{board.description || "No description provided."}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
               </div>
             ) : (
               <div className="space-y-4">

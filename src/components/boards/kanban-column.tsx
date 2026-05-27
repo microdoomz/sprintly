@@ -47,7 +47,7 @@ export function KanbanColumn({ id, boardId, title, tasks, boardTags = [], boardC
           >
             <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
               {tasks.map((task) => (
-                <TaskCard key={task.id} task={task} boardTags={boardTags} />
+                <TaskCard key={task.id} task={task} boardTags={boardTags} boardColor={boardColor} />
               ))}
             </SortableContext>
           </div>
