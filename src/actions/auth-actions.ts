@@ -22,12 +22,21 @@ export async function checkEmailAuthMethod(email: string) {
       )
     });
 
+    // Find if they have a google account
+    const googleAccount = await db.query.accounts.findFirst({
+      where: and(
+        eq(accounts.userId, user.id),
+        eq(accounts.providerId, "google")
+      )
+    });
+
     return {
       exists: true,
-      hasPassword: !!emailAccount,
+      hasPassword: !!emailAccount?.password,
+      isGoogle: !!googleAccount,
     };
   } catch (error) {
     console.error("Error checking email auth method:", error);
-    return { exists: false, hasPassword: false, error: true };
+    return { exists: false, hasPassword: false, isGoogle: false, error: true };
   }
 }

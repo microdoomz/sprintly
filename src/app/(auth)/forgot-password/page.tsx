@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { checkEmailAuthMethod } from "@/actions/auth-actions";
 
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,12 +21,28 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
     
     try {
+      // Check auth method first
+      const authMethod = await checkEmailAuthMethod(email);
+      
+      if (!authMethod.exists) {
+        // Still say success to prevent email enumeration, but don't send anything
+        setIsSuccess(true);
+        setIsLoading(false);
+        return;
+      }
+      
+      if (authMethod.isGoogle && !authMethod.hasPassword) {
+        toast.error("This email is connected with Google. Please use Google Login instead.");
+        setIsLoading(false);
+        return;
+      }
+
       const res = await fetch("/api/auth/request-password-reset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: email,
-          redirectTo: "/reset-password"
+          redirectTo: "/reset-password" // This relies on the reset-password page handling the token
         }),
       });
 

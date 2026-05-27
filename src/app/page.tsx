@@ -48,10 +48,10 @@ export default function Home() {
             Sprintly brings your team&apos;s tasks, boards, and goals into one unified, beautiful workspace. Built for modern teams who demand performance and aesthetics.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <TransitionLink href="/register" size="lg" className="rounded-full h-14 px-8 text-base bg-white text-black hover:bg-white/90 shadow-lg shadow-white/10 transition-all hover:scale-105">
+            <TransitionLink href="/register" size="lg" className="rounded-full h-14 px-8 text-base bg-white text-black hover:bg-white/90 shadow-lg shadow-white/10 transition-all hover:scale-105 font-medium">
               Start for free <ArrowRight className="ml-2 h-4 w-4" />
             </TransitionLink>
-            <TransitionLink href="/login" size="lg" variant="outline" className="rounded-full h-14 px-8 text-base border-white/10 bg-white/5 backdrop-blur-xl hover:bg-white/10 text-white transition-all">
+            <TransitionLink href="/login" size="lg" variant="outline" className="rounded-full h-14 px-8 text-base border-white/10 bg-white/5 backdrop-blur-xl hover:bg-white/10 text-white transition-all font-medium">
               Sign in
             </TransitionLink>
           </div>

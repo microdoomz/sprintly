@@ -6,13 +6,13 @@ import {
   DragOverlay,
   closestCorners,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragStartEvent,
-  DragOverEvent,
   DragEndEvent,
-  TouchSensor,
+  DragOverEvent,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates, arrayMove } from "@dnd-kit/sortable";
 import { KanbanColumn } from "./kanban-column";
@@ -40,7 +40,7 @@ export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boar
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: {
         distance: 5,
       },

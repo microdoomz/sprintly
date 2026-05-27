@@ -67,16 +67,38 @@ export async function getBoards() {
       return { error: "Unauthorized", data: null };
     }
 
-    // Fetch boards where user is a member
+    // Fetch boards where user is a member, including latest activity
     const userBoards = await db.query.boardMembers.findMany({
       where: eq(boardMembers.userId, session.user.id),
       with: {
-        board: true
+        board: {
+          with: {
+            activityLogs: {
+              orderBy: (logs, { desc }) => [desc(logs.createdAt)],
+              limit: 1
+            }
+          }
+        }
       },
     });
 
-    // Filter out soft-deleted boards
-    return { data: userBoards.map(bm => bm.board).filter(b => b && b.deletedAt === null) };
+    // Filter out soft-deleted boards and sort by actual latest activity
+    const activeBoards = userBoards
+      .map(bm => {
+        const board = bm.board;
+        // If there's an activity log, use its timestamp, otherwise fallback to board.updatedAt
+        const latestActivityTime = board?.activityLogs?.[0]?.createdAt;
+        if (latestActivityTime) {
+          board.updatedAt = latestActivityTime;
+        }
+        // Remove the nested activityLogs so we don't leak it or bloat the response if not needed
+        const { activityLogs, ...restBoard } = board as any;
+        return restBoard;
+      })
+      .filter(b => b && b.deletedAt === null)
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+      
+    return { data: activeBoards };
   } catch (error: any) {
     console.error("Failed to fetch boards:", error);
     return { error: error.message || "Failed to fetch boards", data: null };

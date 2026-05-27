@@ -37,17 +37,33 @@ async function DashboardContent() {
     redirect("/login");
   }
 
-  // 1. Fetch user boards
+  // 1. Fetch user boards with latest activity
   const memberships = await db.query.boardMembers.findMany({
     where: eq(boardMembers.userId, session.user.id),
     with: {
-      board: true,
+      board: {
+        with: {
+          activityLogs: {
+            orderBy: (logs, { desc }) => [desc(logs.createdAt)],
+            limit: 1
+          }
+        }
+      },
     },
   });
 
   const myBoards = memberships
-    .map((bm) => bm.board)
-    .filter((b) => b && !b.deletedAt); // Filter out soft-deleted boards
+    .map((bm) => {
+      const board = bm.board;
+      const latestActivityTime = board?.activityLogs?.[0]?.createdAt;
+      if (latestActivityTime) {
+        board.updatedAt = latestActivityTime;
+      }
+      return board;
+    })
+    .filter((b) => b && !b.deletedAt) // Filter out soft-deleted boards
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    
   const totalBoards = myBoards.length;
 
   // 3. Fetch activity logs and tasks for all user boards
