@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { boards, boardMembers, users } from "@/lib/db/schema";
+import { boards, boardMembers, users, activityLogs } from "@/lib/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
@@ -34,6 +34,15 @@ export async function createBoard(data: { title: string; description?: string; c
       boardId: board.id,
       userId: session.user.id,
       role: "owner",
+    });
+
+    // 3. Log activity
+    await db.insert(activityLogs).values({
+      boardId: board.id,
+      userId: session.user.id,
+      action: "created",
+      entityType: "board",
+      entityId: board.id,
     });
 
     const newBoard = board;
@@ -141,6 +150,15 @@ export async function deleteBoard(boardId: string) {
       .set({ deletedAt: new Date(), updatedAt: new Date() })
       .where(eq(boards.id, boardId));
 
+    // Log activity
+    await db.insert(activityLogs).values({
+      boardId: boardId,
+      userId: session.user.id,
+      action: "deleted",
+      entityType: "board",
+      entityId: boardId,
+    });
+
     revalidatePath("/boards");
     revalidatePath("/dashboard");
     return { success: true };
@@ -178,6 +196,15 @@ export async function updateBoard(boardId: string, data: { title: string; descri
         updatedAt: new Date(),
       })
       .where(eq(boards.id, boardId));
+
+    // Log activity
+    await db.insert(activityLogs).values({
+      boardId: boardId,
+      userId: session.user.id,
+      action: "updated",
+      entityType: "board",
+      entityId: boardId,
+    });
 
     revalidatePath(`/boards/${boardId}`);
     revalidatePath("/boards");
@@ -237,9 +264,138 @@ export async function addBoardMember(boardId: string, email: string) {
       role: "member",
     });
 
+    // Log activity
+    await db.insert(activityLogs).values({
+      boardId: boardId,
+      userId: session.user.id,
+      action: `invited ${userToInvite.email}`,
+      entityType: "member",
+      entityId: userToInvite.id,
+    });
+
     revalidatePath(`/boards/${boardId}`);
     return { success: true };
   } catch (error: any) {
     return { error: error.message || "Failed to add member" };
+  }
+}
+
+export async function removeMember(boardId: string, memberId: string) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+
+    if (!session?.user) {
+      return { error: "Unauthorized" };
+    }
+
+    // Check if current user is owner
+    const membership = await db.query.boardMembers.findFirst({
+      where: and(
+        eq(boardMembers.boardId, boardId),
+        eq(boardMembers.userId, session.user.id)
+      )
+    });
+
+    if (!membership || membership.role !== "owner") {
+      return { error: "Access denied. Only board owners can remove members." };
+    }
+
+    // Owner cannot remove themselves this way
+    if (memberId === session.user.id) {
+      return { error: "You cannot remove yourself. Transfer ownership first." };
+    }
+
+    await db.delete(boardMembers).where(
+      and(
+        eq(boardMembers.boardId, boardId),
+        eq(boardMembers.userId, memberId)
+      )
+    );
+
+    // Log activity
+    await db.insert(activityLogs).values({
+      boardId: boardId,
+      userId: session.user.id,
+      action: "removed",
+      entityType: "member",
+      entityId: memberId,
+    });
+
+    revalidatePath(`/boards/${boardId}`);
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to remove member" };
+  }
+}
+
+export async function transferOwnership(boardId: string, newOwnerId: string) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+
+    if (!session?.user) {
+      return { error: "Unauthorized" };
+    }
+
+    // Check if current user is owner
+    const board = await db.query.boards.findFirst({
+      where: eq(boards.id, boardId)
+    });
+
+    if (!board || board.ownerId !== session.user.id) {
+      return { error: "Access denied. Only the board owner can transfer ownership." };
+    }
+
+    // Make sure the new owner is a member
+    const newOwnerMembership = await db.query.boardMembers.findFirst({
+      where: and(
+        eq(boardMembers.boardId, boardId),
+        eq(boardMembers.userId, newOwnerId)
+      )
+    });
+
+    if (!newOwnerMembership) {
+      return { error: "The new owner must be a member of the board first." };
+    }
+
+    // Update board owner
+    await db.update(boards)
+      .set({ ownerId: newOwnerId })
+      .where(eq(boards.id, boardId));
+
+    // Update old owner role to member
+    await db.update(boardMembers)
+      .set({ role: "member" })
+      .where(and(
+        eq(boardMembers.boardId, boardId),
+        eq(boardMembers.userId, session.user.id)
+      ));
+
+    // Update new owner role to owner
+    await db.update(boardMembers)
+      .set({ role: "owner" })
+      .where(and(
+        eq(boardMembers.boardId, boardId),
+        eq(boardMembers.userId, newOwnerId)
+      ));
+
+    // Log activity
+    await db.insert(activityLogs).values({
+      boardId: boardId,
+      userId: session.user.id,
+      action: "transferred ownership to",
+      entityType: "member",
+      entityId: newOwnerId,
+    });
+
+    revalidatePath(`/boards/${boardId}`);
+    revalidatePath("/dashboard");
+    revalidatePath("/boards");
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to transfer ownership" };
   }
 }

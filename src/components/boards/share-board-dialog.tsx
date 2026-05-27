@@ -14,19 +14,21 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserPlus, Shield, User } from "lucide-react";
-import { addBoardMember } from "@/actions/board-actions";
+import { UserPlus, Shield, User, MoreHorizontal, UserMinus } from "lucide-react";
+import { addBoardMember, removeMember, transferOwnership } from "@/actions/board-actions";
 import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface ShareBoardDialogProps {
   board: {
     id: string;
-    title: string;
+    ownerId: string;
     members: any[];
   };
+  currentUserId: string;
 }
 
-export function ShareBoardDialog({ board }: ShareBoardDialogProps) {
+export function ShareBoardDialog({ board, currentUserId }: ShareBoardDialogProps) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +53,34 @@ export function ShareBoardDialog({ board }: ShareBoardDialogProps) {
       setIsLoading(false);
     }
   };
+
+  const handleRemove = async (memberId: string) => {
+    try {
+      setIsLoading(true);
+      const res = await removeMember(board.id, memberId);
+      if (res.error) throw new Error(res.error);
+      toast.success("Member removed successfully");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTransfer = async (newOwnerId: string) => {
+    try {
+      setIsLoading(true);
+      const res = await transferOwnership(board.id, newOwnerId);
+      if (res.error) throw new Error(res.error);
+      toast.success("Ownership transferred successfully");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const isOwner = currentUserId === board.ownerId;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -108,14 +138,35 @@ export function ShareBoardDialog({ board }: ShareBoardDialogProps) {
                     <p className="text-xs text-muted-foreground truncate leading-tight">{member.user.email}</p>
                   </div>
                 </div>
-                <Badge variant={member.role === "owner" ? "default" : "secondary"} className="text-[10px] capitalize px-1.5 py-0">
-                  {member.role === "owner" ? (
-                    <Shield className="h-3 w-3 mr-1 inline" />
-                  ) : (
-                    <User className="h-3 w-3 mr-1 inline" />
+                <div className="flex items-center gap-2">
+                  <Badge variant={member.role === "owner" ? "default" : "secondary"} className="text-[10px] capitalize px-1.5 py-0">
+                    {member.role === "owner" ? (
+                      <Shield className="h-3 w-3 mr-1 inline" />
+                    ) : (
+                      <User className="h-3 w-3 mr-1 inline" />
+                    )}
+                    {member.role}
+                  </Badge>
+                  {isOwner && member.userId !== currentUserId && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleTransfer(member.userId)} disabled={isLoading}>
+                          <Shield className="h-4 w-4 mr-2" />
+                          Make Owner
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleRemove(member.userId)} disabled={isLoading} className="text-destructive focus:text-destructive">
+                          <UserMinus className="h-4 w-4 mr-2" />
+                          Remove from board
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )}
-                  {member.role}
-                </Badge>
+                </div>
               </div>
             ))}
           </div>

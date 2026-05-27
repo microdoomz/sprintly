@@ -12,6 +12,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { CreateBoardDialog } from "@/components/boards/create-board-dialog";
 import { DashboardTiles } from "@/components/dashboard/dashboard-tiles";
+import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { activityLogs } from "@/lib/db/schema";
 
 function formatTimeAgo(date: Date) {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
@@ -46,16 +48,17 @@ export default async function DashboardPage() {
     .filter((b) => b && !b.deletedAt); // Filter out soft-deleted boards
   const totalBoards = myBoards.length;
 
-  // 2. Fetch tasks for user boards
+  // 3. Fetch activity logs and tasks for all user boards
   let userTasks: any[] = [];
-  let recentTasks: any[] = [];
-
+  let activities: any[] = [];
   if (myBoards.length > 0) {
     const boardIds = myBoards.map((b) => b.id);
+    
+    // Fallback: If no tasks/activities are recorded yet, we fetch them empty
     userTasks = await db.query.tasks.findMany({
       where: and(
         inArray(tasks.boardId, boardIds),
-        isNull(tasks.deletedAt) // Filter out soft-deleted tasks
+        isNull(tasks.deletedAt)
       ),
       with: {
         creator: {
@@ -73,8 +76,24 @@ export default async function DashboardPage() {
       orderBy: (tasks, { desc }) => [desc(tasks.createdAt)],
     });
 
-    // Get recent 5 tasks
-    recentTasks = userTasks.slice(0, 5);
+    activities = await db.query.activityLogs.findMany({
+      where: inArray(activityLogs.boardId, boardIds),
+      with: {
+        user: {
+          columns: {
+            name: true,
+            image: true,
+          }
+        },
+        board: {
+          columns: {
+            title: true,
+          }
+        }
+      },
+      orderBy: (activityLogs, { desc }) => [desc(activityLogs.createdAt)],
+      limit: 50,
+    });
   }
 
   return (
@@ -153,44 +172,7 @@ export default async function DashboardPage() {
             )}
           </CardContent>
         </Card>
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>
-              Updates from your tasks and boards
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {recentTasks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
-                <CheckSquare className="h-8 w-8 mb-2 opacity-50" />
-                <p className="text-sm">No recent activity</p>
-                <p className="text-xs mt-1">Activities will appear as tasks are created.</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {recentTasks.map((task) => (
-                  <div key={task.id} className="flex items-start space-x-3 text-sm">
-                    <div className="mt-0.5">
-                      <div className="h-2 w-2 rounded-full bg-blue-500 mt-1.5" />
-                    </div>
-                    <div className="space-y-0.5 flex-1 min-w-0">
-                      <p className="text-sm font-medium leading-none truncate">
-                        {task.creator?.name || "Someone"} created a task
-                      </p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        &quot;{task.title}&quot; in {task.board?.title}
-                      </p>
-                    </div>
-                    <div className="text-xs text-muted-foreground whitespace-nowrap">
-                      {formatTimeAgo(new Date(task.createdAt))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <RecentActivity activities={activities} />
       </div>
     </div>
   );

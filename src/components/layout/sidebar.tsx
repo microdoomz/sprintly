@@ -51,8 +51,8 @@ export function Sidebar() {
       isCollapsed ? "w-16" : "w-64"
     )}>
       <div className="px-3 py-2 flex-1 flex flex-col">
-        {/* Brand Header */}
-        <div className={cn("flex items-center mb-10 transition-all duration-300", isCollapsed ? "justify-center pl-0" : "pl-3")}>
+        {/* Brand Header & Toggle */}
+        <div className={cn("flex items-center justify-between mb-8 transition-all duration-300", isCollapsed ? "flex-col justify-center gap-4 pl-0" : "px-3")}>
           <Link href="/dashboard" className="flex items-center">
             <div className={cn(
               "relative h-8 w-8 bg-primary rounded-md flex items-center justify-center shrink-0 transition-all duration-300",
@@ -66,15 +66,12 @@ export function Sidebar() {
               </h1>
             )}
           </Link>
-        </div>
 
-        {/* Collapse Toggle */}
-        <div className={cn("flex mb-6", isCollapsed ? "justify-center" : "justify-end px-3")}>
           <Button
             onClick={() => setIsCollapsed(!isCollapsed)}
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-primary cursor-pointer"
+            className="h-8 w-8 text-muted-foreground hover:text-primary cursor-pointer shrink-0"
           >
             {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>

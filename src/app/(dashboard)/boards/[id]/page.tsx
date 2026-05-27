@@ -9,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BoardWorkspace } from "@/components/boards/board-workspace";
 import { BoardSettingsDialog } from "@/components/boards/board-settings-dialog";
 import { ShareBoardDialog } from "@/components/boards/share-board-dialog";
+import { auth } from "@/lib/auth/auth";
+import { headers } from "next/headers";
 
 export default async function SingleBoardPage({
   params,
@@ -23,6 +25,11 @@ export default async function SingleBoardPage({
   if (boardError || !board) {
     notFound();
   }
+
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  const currentUserId = session?.user?.id || "";
 
   const tasksData = await getTasksForBoard(boardId);
 
@@ -58,7 +65,7 @@ export default async function SingleBoardPage({
             ))}
           </div>
           
-          <ShareBoardDialog board={board} />
+          <ShareBoardDialog board={board} currentUserId={currentUserId} />
           <BoardSettingsDialog board={board} />
         </div>
       </div>
