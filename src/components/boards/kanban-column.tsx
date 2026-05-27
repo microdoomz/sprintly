@@ -13,9 +13,10 @@ interface KanbanColumnProps {
   title: string;
   tasks: TaskType[];
   boardTags?: any[];
+  boardColor?: string | null;
 }
 
-export function KanbanColumn({ id, boardId, title, tasks, boardTags = [] }: KanbanColumnProps) {
+export function KanbanColumn({ id, boardId, title, tasks, boardTags = [], boardColor }: KanbanColumnProps) {
   const { setNodeRef } = useDroppable({
     id,
     data: {
@@ -28,7 +29,10 @@ export function KanbanColumn({ id, boardId, title, tasks, boardTags = [] }: Kanb
 
   return (
     <div className="flex flex-col h-full w-80 min-w-80 bg-card/50 rounded-xl border border-border">
-      <div className="p-4 flex items-center justify-between border-b border-border/50 bg-card rounded-t-xl">
+      <div 
+        className="p-4 flex items-center justify-between border-b border-border/50 bg-card rounded-t-xl"
+        style={boardColor ? { borderTop: `3px solid ${boardColor}` } : {}}
+      >
         <h3 className="font-semibold text-sm tracking-tight">{title}</h3>
         <span className="bg-muted text-muted-foreground text-xs font-medium px-2 py-0.5 rounded-full">
           {tasks.length}

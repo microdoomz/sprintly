@@ -22,6 +22,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 interface ShareBoardDialogProps {
   board: {
     id: string;
+    title: string;
     ownerId: string;
     members: any[];
   };

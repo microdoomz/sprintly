@@ -64,54 +64,54 @@
 @layer base {
   :root {
     color-scheme: dark;
-    --background: #0B0F19;
+    --background: transparent;
     --foreground: #F9FAFB;
-    --surface: #111827;
-    --surface-hover: #1a2235;
-    --surface-active: #1f2a3f;
-    --border: #1e293b;
-    --border-hover: #334155;
-    --primary: #7C3AED;
-    --primary-hover: #6D28D9;
+    --surface: rgba(17, 24, 39, 0.4);
+    --surface-hover: rgba(26, 34, 53, 0.5);
+    --surface-active: rgba(31, 42, 63, 0.6);
+    --border: rgba(30, 41, 59, 0.5);
+    --border-hover: rgba(51, 65, 85, 0.6);
+    --primary: #14b8a6;
+    --primary-hover: #0f766e;
     --primary-foreground: #FFFFFF;
-    --accent: #A78BFA;
-    --accent-foreground: #0B0F19;
-    --muted: #374151;
+    --accent: #06b6d4;
+    --accent-foreground: #FFFFFF;
+    --muted: rgba(55, 65, 81, 0.5);
     --muted-foreground: #9CA3AF;
     --destructive: #EF4444;
     --destructive-foreground: #FFFFFF;
-    --card: #111827;
+    --card: rgba(17, 24, 39, 0.5);
     --card-foreground: #F9FAFB;
-    --popover: #111827;
+    --popover: rgba(17, 24, 39, 0.6);
     --popover-foreground: #F9FAFB;
     --input: #1e293b;
-    --ring: #7C3AED;
+    --ring: #14b8a6;
   }
 
   .light, [data-theme="light"] {
     color-scheme: light;
-    --background: #FAFAFA;
+    --background: transparent;
     --foreground: #0F172A;
-    --surface: #FFFFFF;
-    --surface-hover: #F1F5F9;
-    --surface-active: #E2E8F0;
-    --border: #E2E8F0;
-    --border-hover: #CBD5E1;
-    --primary: #7C3AED;
-    --primary-hover: #6D28D9;
+    --surface: rgba(255, 255, 255, 0.6);
+    --surface-hover: rgba(241, 245, 249, 0.7);
+    --surface-active: rgba(226, 232, 240, 0.8);
+    --border: rgba(226, 232, 240, 0.5);
+    --border-hover: rgba(203, 213, 225, 0.6);
+    --primary: #14b8a6;
+    --primary-hover: #0f766e;
     --primary-foreground: #FFFFFF;
-    --accent: #A78BFA;
+    --accent: #06b6d4;
     --accent-foreground: #FFFFFF;
-    --muted: #F1F5F9;
+    --muted: rgba(241, 245, 249, 0.6);
     --muted-foreground: #64748B;
     --destructive: #EF4444;
     --destructive-foreground: #FFFFFF;
-    --card: #FFFFFF;
+    --card: rgba(255, 255, 255, 0.6);
     --card-foreground: #0F172A;
-    --popover: #FFFFFF;
+    --popover: rgba(255, 255, 255, 0.7);
     --popover-foreground: #0F172A;
     --input: #E2E8F0;
-    --ring: #7C3AED;
+    --ring: #14b8a6;
   }
 
   * {
@@ -128,9 +128,15 @@
 }
 
 @layer components {
+  /* Global Liquid Glass */
+  .bg-card, .bg-popover, .bg-surface, .bg-background {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
   .glass {
-    background: rgba(17, 24, 39, 0.7);
-    backdrop-filter: blur(12px);
+    background: rgba(17, 24, 39, 0.4);
+    backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
@@ -141,11 +147,11 @@
   }
 
   .gradient-primary {
-    background: linear-gradient(135deg, #7C3AED, #A78BFA);
+    background: linear-gradient(135deg, #14b8a6, #06b6d4);
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #7C3AED, #A78BFA);
+    background: linear-gradient(135deg, #14b8a6, #3b82f6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

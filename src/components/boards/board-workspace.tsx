@@ -2,8 +2,13 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { TaskType } from "@/components/tasks/task-card";
-import { KanbanBoard } from "./kanban-board";
+import dynamic from "next/dynamic";
 import { ListTableView } from "./list-table-view";
+
+const KanbanBoard = dynamic(() => import("./kanban-board").then(mod => mod.KanbanBoard), {
+  ssr: false,
+  loading: () => <div className="flex-1 animate-pulse bg-surface/20 rounded-xl h-full border border-border/50" />
+});
 import { getPusherClient } from "@/lib/pusher/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,9 +28,10 @@ interface BoardWorkspaceProps {
   boardId: string;
   initialTasks: TaskType[];
   boardTags?: any[];
+  boardColor?: string | null;
 }
 
-export function BoardWorkspace({ boardId, initialTasks, boardTags = [] }: BoardWorkspaceProps) {
+export function BoardWorkspace({ boardId, initialTasks, boardTags = [], boardColor }: BoardWorkspaceProps) {
   const [tasks, setTasks] = useState<TaskType[]>(initialTasks);
   const [view, setView] = useState<"kanban" | "list">("kanban");
   const [search, setSearch] = useState("");
@@ -171,7 +177,7 @@ export function BoardWorkspace({ boardId, initialTasks, boardTags = [] }: BoardW
           tasks={filteredAndSortedTasks} 
           setTasks={setTasks}
           boardTags={boardTags}
-          // If filtered (hiding items), we might want to disable drag-and-drop to avoid position corruption
+          boardColor={boardColor}
           isFiltered={search !== "" || filterPriority !== "all" || filterStatus !== "all"} 
         />
       ) : (

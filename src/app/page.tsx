@@ -4,19 +4,12 @@ import { CheckSquare, ArrowRight, LayoutDashboard, Users, Zap, Layout } from "lu
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#050505] text-white">
-      {/* Dynamic Animated Background */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[25%] -left-[10%] w-[50%] h-[50%] bg-violet-600/30 blur-[120px] rounded-full animate-pulse-slow mix-blend-screen" />
-        <div className="absolute top-[20%] -right-[10%] w-[45%] h-[45%] bg-fuchsia-600/30 blur-[120px] rounded-full animate-pulse-slow mix-blend-screen" style={{ animationDelay: '2s' }} />
-        <div className="absolute -bottom-[20%] left-[20%] w-[60%] h-[60%] bg-sky-600/30 blur-[120px] rounded-full animate-pulse-slow mix-blend-screen" style={{ animationDelay: '4s' }} />
-      </div>
-
+    <div className="relative min-h-screen overflow-hidden text-white">
       {/* Glassmorphism Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 border-b border-white/5 bg-black/20 backdrop-blur-2xl supports-[backdrop-filter]:bg-black/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 border-b border-white/5 bg-transparent backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2 group cursor-default">
-            <div className="bg-gradient-to-tr from-violet-500 to-fuchsia-500 p-1.5 rounded-lg shadow-lg group-hover:shadow-violet-500/25 transition-all">
+            <div className="bg-gradient-to-tr from-teal-500 to-cyan-500 p-1.5 rounded-lg shadow-lg group-hover:shadow-teal-500/25 transition-all">
               <CheckSquare className="h-5 w-5 text-white" />
             </div>
             <span className="font-semibold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/70">Sprintly</span>
@@ -36,12 +29,12 @@ export default function Home() {
       <main className="relative z-10 pt-32 pb-16 px-6 sm:pt-40 sm:pb-24 lg:pb-32">
         <div className="mx-auto max-w-7xl text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8 shadow-lg shadow-black/50">
-            <span className="flex h-2 w-2 rounded-full bg-violet-400 shadow-[0_0_10px_rgba(167,139,250,0.8)]"></span>
+            <span className="flex h-2 w-2 rounded-full bg-teal-400 shadow-[0_0_10px_rgba(20,184,166,0.8)]"></span>
             <span className="text-xs font-medium text-white/80">Sprintly 2.0 is now live</span>
           </div>
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-7xl lg:text-8xl mb-8 selection:bg-violet-500/30">
+          <h1 className="text-5xl font-extrabold tracking-tight sm:text-7xl lg:text-8xl mb-8 selection:bg-teal-500/30">
             Manage work with <br className="hidden sm:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-b from-violet-300 via-fuchsia-300 to-sky-300">
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-teal-300 via-cyan-300 to-blue-300">
               Liquid Clarity.
             </span>
           </h1>
@@ -63,33 +56,48 @@ export default function Home() {
         {/* Feature Grid - Liquid Glass Cards */}
         <div className="mx-auto max-w-7xl mt-32 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 hover:bg-white/10 transition-all duration-500 hover:-translate-y-1 shadow-2xl shadow-black/50 group">
-            <div className="h-12 w-12 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-6 border border-violet-500/20 group-hover:bg-violet-500/20 transition-colors">
-              <LayoutDashboard className="h-6 w-6 text-violet-300" />
+            <div className="h-12 w-12 rounded-2xl bg-teal-500/10 flex items-center justify-center mb-6 border border-teal-500/20 group-hover:bg-teal-500/20 transition-colors">
+              <LayoutDashboard className="h-6 w-6 text-teal-300" />
             </div>
             <h3 className="text-xl font-semibold text-white/90 mb-3 tracking-tight">Intuitive Boards</h3>
-            <p className="text-white/50 leading-relaxed font-light">Organize tasks effortlessly with drag-and-drop Kanban boards that adapt to your workflow seamlessly.</p>
+            <p className="text-white/50 leading-relaxed font-light mb-4">Organize tasks effortlessly with drag-and-drop Kanban boards that adapt to your workflow seamlessly.</p>
+            <ul className="space-y-2 text-sm text-white/40">
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Custom Tags & Colors</li>
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Drag and Drop UI</li>
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Advanced Filtering</li>
+            </ul>
           </div>
 
           <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 hover:bg-white/10 transition-all duration-500 hover:-translate-y-1 shadow-2xl shadow-black/50 group">
-            <div className="h-12 w-12 rounded-2xl bg-fuchsia-500/10 flex items-center justify-center mb-6 border border-fuchsia-500/20 group-hover:bg-fuchsia-500/20 transition-colors">
-              <Users className="h-6 w-6 text-fuchsia-300" />
+            <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-6 border border-cyan-500/20 group-hover:bg-cyan-500/20 transition-colors">
+              <Users className="h-6 w-6 text-cyan-300" />
             </div>
-            <h3 className="text-xl font-semibold text-white/90 mb-3 tracking-tight">Real-time Sync</h3>
-            <p className="text-white/50 leading-relaxed font-light">Work together in perfect sync. See updates instantly as your teammates move tasks and make changes.</p>
+            <h3 className="text-xl font-semibold text-white/90 mb-3 tracking-tight">Real-time Collaboration</h3>
+            <p className="text-white/50 leading-relaxed font-light mb-4">Work together in perfect sync. See updates instantly as your teammates move tasks and make changes.</p>
+            <ul className="space-y-2 text-sm text-white/40">
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Live WebSocket Sync</li>
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Shared Workspaces</li>
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Activity Timelines</li>
+            </ul>
           </div>
 
           <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 hover:bg-white/10 transition-all duration-500 hover:-translate-y-1 shadow-2xl shadow-black/50 sm:col-span-2 lg:col-span-1 group">
-            <div className="h-12 w-12 rounded-2xl bg-sky-500/10 flex items-center justify-center mb-6 border border-sky-500/20 group-hover:bg-sky-500/20 transition-colors">
-              <Zap className="h-6 w-6 text-sky-300" />
+            <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
+              <Zap className="h-6 w-6 text-blue-300" />
             </div>
             <h3 className="text-xl font-semibold text-white/90 mb-3 tracking-tight">Lightning Fast</h3>
-            <p className="text-white/50 leading-relaxed font-light">Experience a fluid, app-like interface built on modern web technologies for instant responsiveness.</p>
+            <p className="text-white/50 leading-relaxed font-light mb-4">Experience a fluid, app-like interface built on modern web technologies for instant responsiveness.</p>
+            <ul className="space-y-2 text-sm text-white/40">
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Edge Caching</li>
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Instant Navigation</li>
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Optimized Performance</li>
+            </ul>
           </div>
         </div>
         
         {/* App Preview Mockup */}
         <div className="mx-auto max-w-5xl mt-32 relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-violet-500/20 via-fuchsia-500/10 to-transparent blur-3xl -z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-teal-500/20 via-cyan-500/10 to-transparent blur-3xl -z-10" />
           <div className="rounded-[2rem] border border-white/10 bg-white/5 p-2 sm:p-4 backdrop-blur-3xl shadow-2xl shadow-black/80">
             <div className="rounded-xl sm:rounded-2xl overflow-hidden border border-white/5 bg-black/60 shadow-inner">
               {/* Fake App Header */}

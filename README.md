@@ -29,10 +29,12 @@ This project was built to demonstrate proficiency in modern web development arch
 
 - **🔒 Secure Authentication:** Powered by Better Auth (Email/Password & Session Management).
 - **📋 Real-time Kanban Boards:** Drag-and-drop tasks smoothly across columns using `dnd-kit`. Changes are instantly broadcasted to all connected clients via Pusher WebSockets.
-- **🏷️ Advanced Task Management:** Tasks support custom colored tags, subtask checklists, priorities, and descriptions via a sleek modal interface.
+- **🏷️ Advanced Task Management:** Tasks support custom colored tags, subtask checklists, priorities, due dates, and descriptions via a sleek modal interface.
+- **📈 Comprehensive Dashboard:** View stats with interactive popup modals, recent boards, and an expandable real-time Activity Log.
+- **👥 Collaboration & Permissions:** Invite users, manage board memberships, remove members, or transfer ownership seamlessly.
 - **⌨️ Command Palette:** Press `Cmd+K` (or `Ctrl+K`) anywhere in the app for lightning-fast, keyboard-driven navigation.
-- **🎨 UI Polish:** Dark-mode first aesthetic using Tailwind CSS and `shadcn/ui`. Includes optimistic UI updates and smooth skeleton loaders.
-- **⚙️ Board Settings:** Full CRUD operations for boards, including customizable titles, descriptions, and deletion.
+- **🎨 Liquid Glass UI:** Apple-inspired frosted glass components with dynamic animated mesh gradients, dark-mode first aesthetic using Tailwind CSS and `shadcn/ui`.
+- **⚙️ Board Settings:** Full CRUD operations for boards, including customizable titles, descriptions, icons, and soft deletion.
 
 ---
 

@@ -113,22 +113,8 @@ export default async function DashboardPage() {
         </CreateBoardDialog>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Boards</CardTitle>
-            <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalBoards}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Across your workspaces
-            </p>
-          </CardContent>
-        </Card>
-        <div className="md:col-span-1 lg:col-span-3">
-          <DashboardTiles tasks={userTasks} />
-        </div>
+      <div className="w-full">
+        <DashboardTiles tasks={userTasks} boards={myBoards} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">

@@ -26,6 +26,7 @@ interface KanbanBoardProps {
   setTasks: React.Dispatch<React.SetStateAction<TaskType[]>>;
   isFiltered?: boolean;
   boardTags?: any[];
+  boardColor?: string | null;
 }
 
 const COLUMNS = [
@@ -34,7 +35,7 @@ const COLUMNS = [
   { id: "done", title: "Done" },
 ];
 
-export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boardTags = [] }: KanbanBoardProps) {
+export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boardTags = [], boardColor }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
 
   const sensors = useSensors(
@@ -156,12 +157,17 @@ export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boar
             title={col.title}
             tasks={tasks.filter((t) => t.status === col.id)}
             boardTags={boardTags}
+            boardColor={boardColor}
           />
         ))}
       </div>
 
-      <DragOverlay>
-        {activeTask ? <TaskCard task={activeTask} boardTags={boardTags} /> : null}
+      <DragOverlay dropAnimation={null}>
+        {activeTask ? (
+          <div className="opacity-90 shadow-2xl rotate-2 scale-105 transition-transform cursor-grabbing">
+            <TaskCard task={activeTask} boardTags={boardTags} />
+          </div>
+        ) : null}
       </DragOverlay>
     </DndContext>
   );

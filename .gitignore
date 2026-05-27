@@ -36,3 +36,14 @@ next-env.d.ts
 
 # Drizzle
 drizzle/
+
+# Building docs
+App Flow.md
+Backend Schema.md
+Implementation Plan.md
+Intern Assignment Task Manager App.pdf
+Product Requirements.md
+Technical Requirements.md
+UIUX Design Brief.md
+Agent.md
+Prompt.md

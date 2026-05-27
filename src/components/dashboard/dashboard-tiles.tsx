@@ -21,6 +21,7 @@ interface TaskWithBoard {
 
 interface DashboardTilesProps {
   tasks: TaskWithBoard[];
+  boards?: any[];
 }
 
 const priorityColors: Record<string, string> = {
@@ -30,8 +31,8 @@ const priorityColors: Record<string, string> = {
   low: "bg-blue-500/10 text-blue-500 border-blue-500/20",
 };
 
-export function DashboardTiles({ tasks }: DashboardTilesProps) {
-  const [activeTab, setActiveTab] = useState<"todo" | "in-progress" | "done" | null>(null);
+export function DashboardTiles({ tasks, boards = [] }: DashboardTilesProps) {
+  const [activeTab, setActiveTab] = useState<"todo" | "in-progress" | "done" | "boards" | null>(null);
 
   const todoTasks = tasks.filter((t) => t.status === "todo");
   const inProgressTasks = tasks.filter((t) => t.status === "in-progress");
@@ -49,17 +50,38 @@ export function DashboardTiles({ tasks }: DashboardTilesProps) {
     if (activeTab === "todo") return "To Do Tasks";
     if (activeTab === "in-progress") return "Tasks In Progress";
     if (activeTab === "done") return "Completed Tasks";
+    if (activeTab === "boards") return "All Boards";
     return "";
   };
 
   const getTabDescription = () => {
+    if (activeTab === "boards") {
+      return `You have ${boards.length} board${boards.length === 1 ? "" : "s"} across your workspaces.`;
+    }
     const count = activeTasks.length;
     return `You have ${count} ${activeTab === "in-progress" ? "in-progress" : activeTab} task${count === 1 ? "" : "s"}.`;
   };
 
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* Total Boards Tile */}
+        <Card 
+          className="cursor-pointer hover:border-primary/50 hover:bg-accent/50 transition-all group"
+          onClick={() => setActiveTab("boards")}
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Boards</CardTitle>
+            <Folder className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{boards.length}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Across your workspaces
+            </p>
+          </CardContent>
+        </Card>
+
         {/* To Do Tile */}
         <Card 
           className="cursor-pointer hover:border-primary/50 hover:bg-accent/50 transition-all group"
@@ -119,6 +141,7 @@ export function DashboardTiles({ tasks }: DashboardTilesProps) {
               {activeTab === "todo" && <ListTodo className="h-5 w-5 text-primary" />}
               {activeTab === "in-progress" && <Clock className="h-5 w-5 text-primary" />}
               {activeTab === "done" && <CheckSquare className="h-5 w-5 text-primary" />}
+              {activeTab === "boards" && <Folder className="h-5 w-5 text-primary" />}
               {getTabTitle()}
             </DialogTitle>
             <DialogDescription className="mt-1 text-sm text-muted-foreground">
@@ -132,6 +155,27 @@ export function DashboardTiles({ tasks }: DashboardTilesProps) {
                 <CheckSquare className="h-10 w-10 opacity-30 mb-2" />
                 <p className="text-sm font-medium">No tasks found</p>
                 <p className="text-xs">There are no tasks with this status currently.</p>
+              </div>
+            ) : activeTab === "boards" ? (
+              <div className="space-y-4">
+                {boards.map((board) => (
+                  <div 
+                    key={board.id} 
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/40 transition gap-4"
+                  >
+                    <div className="space-y-1.5 flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
+                        <span className="font-semibold text-sm leading-tight text-foreground truncate block">
+                          {board.title}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span className="truncate">{board.description || "No description provided."}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="space-y-4">

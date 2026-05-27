@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${geistMono.variable} antialiased min-h-screen bg-background font-sans text-foreground selection:bg-primary/30`}
+        className={`${inter.variable} ${geistMono.variable} antialiased min-h-screen bg-background font-sans text-foreground selection:bg-primary/30 overflow-x-hidden`}
       >
         <ThemeProvider
           attribute="class"
@@ -35,7 +35,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          {/* Dynamic Animated Background - Global */}
+          <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-[#050505]">
+            <div className="absolute -top-[25%] -left-[10%] w-[50%] h-[50%] bg-teal-600/30 blur-[120px] rounded-full animate-pulse-slow mix-blend-screen" />
+            <div className="absolute top-[20%] -right-[10%] w-[45%] h-[45%] bg-cyan-600/30 blur-[120px] rounded-full animate-pulse-slow mix-blend-screen" style={{ animationDelay: '2s' }} />
+            <div className="absolute -bottom-[20%] left-[20%] w-[60%] h-[60%] bg-blue-600/30 blur-[120px] rounded-full animate-pulse-slow mix-blend-screen" style={{ animationDelay: '4s' }} />
+          </div>
+          <div className="relative z-0">
+            {children}
+          </div>
           <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>

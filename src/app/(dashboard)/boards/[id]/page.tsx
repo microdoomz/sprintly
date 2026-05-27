@@ -65,12 +65,14 @@ export default async function SingleBoardPage({
             ))}
           </div>
           
-          <ShareBoardDialog board={board} currentUserId={currentUserId} />
+          {currentUserId === board.ownerId && (
+            <ShareBoardDialog board={board} currentUserId={currentUserId} />
+          )}
           <BoardSettingsDialog board={board} />
         </div>
       </div>
 
-      <BoardWorkspace boardId={board.id} boardTags={board.tags || []} initialTasks={tasksData.data || []} />
+      <BoardWorkspace boardId={board.id} boardTags={board.tags || []} initialTasks={tasksData.data || []} boardColor={board.coverColor} />
     </div>
   );
 }
