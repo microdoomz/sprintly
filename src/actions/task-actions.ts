@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { tasks, subtasks, taskTags, tags, boardMembers, activityLogs } from "@/lib/db/schema";
+import { tasks, subtasks, taskTags, tags, boardMembers, activityLogs, boards } from "@/lib/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
@@ -96,6 +96,9 @@ export async function createTask(data: {
       createdBy: user.id,
     }).returning();
 
+    // Touch board updatedAt
+    await db.update(boards).set({ updatedAt: new Date() }).where(eq(boards.id, data.boardId));
+
     // Log activity
     await db.insert(activityLogs).values({
       boardId: data.boardId,
@@ -135,6 +138,9 @@ export async function updateTaskStatus(taskId: string, boardId: string, newStatu
       .set({ status: newStatus, position: newPosition, updatedAt: new Date() })
       .where(eq(tasks.id, taskId));
 
+    // Touch board updatedAt
+    await db.update(boards).set({ updatedAt: new Date() }).where(eq(boards.id, boardId));
+
     // Log activity
     await db.insert(activityLogs).values({
       boardId: boardId,
@@ -168,6 +174,9 @@ export async function deleteTask(taskId: string, boardId: string) {
     await db.update(tasks)
       .set({ deletedAt: new Date(), updatedAt: new Date() })
       .where(eq(tasks.id, taskId));
+
+    // Touch board updatedAt
+    await db.update(boards).set({ updatedAt: new Date() }).where(eq(boards.id, boardId));
 
     // Log activity
     await db.insert(activityLogs).values({
@@ -214,6 +223,9 @@ export async function updateTask(taskId: string, boardId: string, data: {
       .set(updates)
       .where(eq(tasks.id, taskId))
       .returning();
+
+    // Touch board updatedAt
+    await db.update(boards).set({ updatedAt: new Date() }).where(eq(boards.id, boardId));
 
     // Log activity
     await db.insert(activityLogs).values({

@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/button";
 import { CreateBoardDialog } from "@/components/boards/create-board-dialog";
 import Link from "next/link";
 import { getBoards } from "@/actions/board-actions";
+import { formatDistanceToNow } from "date-fns";
+import { Suspense } from "react";
+import BoardsLoading from "./loading";
 
-export default async function BoardsPage() {
+async function BoardsContent() {
   const { data: boards, error } = await getBoards();
 
   return (
@@ -58,7 +61,7 @@ export default async function BoardsPage() {
                 </CardHeader>
                 <CardContent className="mt-auto flex justify-between items-center pb-4">
                   <span className="text-xs text-muted-foreground">
-                    Updated {new Date(board.updatedAt).toLocaleDateString()}
+                    Updated {formatDistanceToNow(new Date(board.updatedAt), { addSuffix: true })}
                   </span>
                   <div className="flex -space-x-2">
                     {/* Real avatars would go here, mock for now */}
@@ -71,5 +74,13 @@ export default async function BoardsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function BoardsPage() {
+  return (
+    <Suspense fallback={<BoardsLoading />}>
+      <BoardsContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckSquare, ArrowRight, LayoutDashboard, Users, Zap, Layout } from "lucide-react";
+import { TransitionLink } from "@/components/ui/transition-link";
 
 export default function Home() {
   return (
@@ -16,16 +17,16 @@ export default function Home() {
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <Link href="#features" className="hover:text-white transition-colors">Features</Link>
-            <Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link>
+            <Link href="/features" className="hover:text-white transition-colors">Features</Link>
+            <Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm font-medium text-white/70 hover:text-white transition-colors">
+            <TransitionLink href="/login" variant="link" className="text-sm font-medium text-white/70 hover:text-white transition-colors px-0">
               Log In
-            </Link>
-            <Button asChild size="sm" className="rounded-full bg-white text-black hover:bg-white/90">
-              <Link href="/register">Get Started</Link>
-            </Button>
+            </TransitionLink>
+            <TransitionLink href="/register" size="sm" className="rounded-full bg-white text-black hover:bg-white/90">
+              Get Started
+            </TransitionLink>
           </div>
         </div>
       </nav>
@@ -47,14 +48,12 @@ export default function Home() {
             Sprintly brings your team&apos;s tasks, boards, and goals into one unified, beautiful workspace. Built for modern teams who demand performance and aesthetics.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button asChild size="lg" className="rounded-full h-14 px-8 text-base bg-white text-black hover:bg-white/90 shadow-lg shadow-white/10 transition-all hover:scale-105">
-              <Link href="/register">
-                Start for free <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full h-14 px-8 text-base border-white/10 bg-white/5 backdrop-blur-xl hover:bg-white/10 text-white transition-all">
-              <Link href="/login">Sign in</Link>
-            </Button>
+            <TransitionLink href="/register" size="lg" className="rounded-full h-14 px-8 text-base bg-white text-black hover:bg-white/90 shadow-lg shadow-white/10 transition-all hover:scale-105">
+              Start for free <ArrowRight className="ml-2 h-4 w-4" />
+            </TransitionLink>
+            <TransitionLink href="/login" size="lg" variant="outline" className="rounded-full h-14 px-8 text-base border-white/10 bg-white/5 backdrop-blur-xl hover:bg-white/10 text-white transition-all">
+              Sign in
+            </TransitionLink>
           </div>
         </div>
 

@@ -2,24 +2,36 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Mail, Loader2, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Mail, Loader2, CheckCircle2, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { authClient } from "@/lib/auth/auth-client";
+import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    
+    const { data, error } = await authClient.forgetPassword({
+      email: email,
+      redirectTo: "/reset-password"
+    });
+
+    setIsLoading(false);
+    
+    if (error) {
+      toast.error(error.message || "Failed to send reset link");
+    } else {
       setIsSuccess(true);
-    }, 1500);
+    }
   };
 
   return (
@@ -43,10 +55,10 @@ export default function ForgotPasswordPage() {
           <CardContent>
             {isSuccess ? (
               <div className="flex flex-col items-center justify-center py-6 text-center animate-fade-in">
-                <CheckCircle2 className="w-12 h-12 text-teal-500 mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Check your email</h3>
+                <Terminal className="w-12 h-12 text-teal-500 mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Check your terminal</h3>
                 <p className="text-sm text-muted-foreground">
-                  We've sent password reset instructions to your email address.
+                  Since this is a demo environment without an email server configured, the password reset link has been logged to your Next.js server terminal. Please check there to continue!
                 </p>
               </div>
             ) : (
@@ -60,6 +72,8 @@ export default function ForgotPasswordPage() {
                       type="email"
                       placeholder="name@example.com"
                       className="pl-9 bg-black/20 border-white/10"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>

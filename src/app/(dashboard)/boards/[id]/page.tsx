@@ -11,15 +11,10 @@ import { BoardSettingsDialog } from "@/components/boards/board-settings-dialog";
 import { ShareBoardDialog } from "@/components/boards/share-board-dialog";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
+import { Suspense } from "react";
+import BoardLoading from "./loading";
 
-export default async function SingleBoardPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const resolvedParams = await params;
-  const boardId = resolvedParams.id;
-
+async function BoardContent({ boardId }: { boardId: string }) {
   const { data: board, error: boardError } = await getBoardById(boardId);
   
   if (boardError || !board) {
@@ -74,5 +69,20 @@ export default async function SingleBoardPage({
 
       <BoardWorkspace boardId={board.id} boardTags={board.tags || []} initialTasks={tasksData.data || []} boardColor={board.coverColor} />
     </div>
+  );
+}
+
+export default async function SingleBoardPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+  const boardId = resolvedParams.id;
+
+  return (
+    <Suspense fallback={<BoardLoading />}>
+      <BoardContent boardId={boardId} />
+    </Suspense>
   );
 }

@@ -14,6 +14,8 @@ import { CreateBoardDialog } from "@/components/boards/create-board-dialog";
 import { DashboardTiles } from "@/components/dashboard/dashboard-tiles";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { activityLogs } from "@/lib/db/schema";
+import { Suspense } from "react";
+import DashboardLoading from "./loading";
 
 function formatTimeAgo(date: Date) {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
@@ -26,7 +28,7 @@ function formatTimeAgo(date: Date) {
   return `${days}d ago`;
 }
 
-export default async function DashboardPage() {
+async function DashboardContent() {
   const session = await auth.api.getSession({
     headers: await headers()
   });
@@ -161,5 +163,13 @@ export default async function DashboardPage() {
         <RecentActivity activities={activities} />
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<DashboardLoading />}>
+      <DashboardContent />
+    </Suspense>
   );
 }
