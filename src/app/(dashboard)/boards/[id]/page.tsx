@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { getBoardById } from "@/actions/board-actions";
 import { getTasksForBoard } from "@/actions/task-actions";
 import { notFound } from "next/navigation";
@@ -12,9 +10,11 @@ import { ShareBoardDialog } from "@/components/boards/share-board-dialog";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { Suspense } from "react";
+import { unstable_noStore as noStore } from "next/cache";
 import BoardLoading from "./loading";
 
 async function BoardContent({ boardId }: { boardId: string }) {
+  noStore();
   const { data: board, error: boardError } = await getBoardById(boardId);
   
   if (boardError || !board) {

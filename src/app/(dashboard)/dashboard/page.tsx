@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckSquare, Clock, LayoutDashboard, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +13,7 @@ import { DashboardTiles } from "@/components/dashboard/dashboard-tiles";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { activityLogs } from "@/lib/db/schema";
 import { Suspense } from "react";
+import { unstable_noStore as noStore } from "next/cache";
 import DashboardLoading from "./loading";
 
 function formatTimeAgo(date: Date) {
@@ -29,6 +28,7 @@ function formatTimeAgo(date: Date) {
 }
 
 async function DashboardContent() {
+  noStore();
   const session = await auth.api.getSession({
     headers: await headers()
   });

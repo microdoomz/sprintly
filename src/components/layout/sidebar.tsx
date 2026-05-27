@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { LayoutDashboard, CheckSquare, Settings, LogOut, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { signOut } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 const routes = [
   {
@@ -35,19 +34,10 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [pendingRoute, setPendingRoute] = useState<string | null>(null);
-
-  const handleNavigation = (href: string) => {
-    if (pathname === href) return;
-    setPendingRoute(href);
-    router.push(href);
-  };
-
-  useEffect(() => {
-    setPendingRoute(null);
-  }, [pathname]);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     await signOut({
       fetchOptions: {
         onSuccess: () => {
@@ -92,33 +82,26 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
           )}
         </div>
 
-        {/* Routes */}
+        {/* Routes — uses Link so Next.js loading.tsx skeleton shows instantly */}
         <div className="space-y-1">
           {routes.map((route) => {
             const isActive = pathname === route.href || pathname.startsWith(`${route.href}/`);
-            const isPendingRoute = pendingRoute === route.href;
             
             return (
-              <button
+              <Link
                 key={route.href}
-                onClick={() => handleNavigation(route.href)}
-                disabled={isPendingRoute}
+                href={route.href}
                 className={cn(
                   "text-sm group flex p-3 w-full font-medium cursor-pointer rounded-lg transition hover:text-primary hover:bg-primary/10",
                   isActive ? "text-primary bg-primary/10" : "text-muted-foreground",
                   (!isMobile && isCollapsed) ? "justify-center" : "justify-start",
-                  isPendingRoute ? "opacity-70 pointer-events-none" : ""
                 )}
               >
                 <div className={cn("flex items-center", (!isMobile && isCollapsed) ? "justify-center" : "flex-1")}>
-                  {isPendingRoute ? (
-                    <Loader2 className={cn("h-5 w-5 shrink-0 animate-spin", (!isMobile && isCollapsed) ? "" : "mr-3", route.color)} />
-                  ) : (
-                    <route.icon className={cn("h-5 w-5 shrink-0 transition-all duration-300", (!isMobile && isCollapsed) ? "" : "mr-3", route.color)} />
-                  )}
+                  <route.icon className={cn("h-5 w-5 shrink-0 transition-all duration-300", (!isMobile && isCollapsed) ? "" : "mr-3", route.color)} />
                   {(isMobile || !isCollapsed) && <span className="truncate">{route.label}</span>}
                 </div>
-              </button>
+              </Link>
             );
           })}
         </div>
@@ -129,13 +112,18 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
         <Button 
           onClick={handleLogout} 
           variant="ghost" 
+          disabled={isLoggingOut}
           className={cn(
             "w-full text-muted-foreground hover:text-primary cursor-pointer",
             (!isMobile && isCollapsed) ? "justify-center px-0" : "justify-start"
           )}
         >
-          <LogOut className={cn("h-5 w-5 shrink-0", (!isMobile && isCollapsed) ? "" : "mr-3")} />
-          {(isMobile || !isCollapsed) && <span>Log Out</span>}
+          {isLoggingOut ? (
+            <Loader2 className={cn("h-5 w-5 shrink-0 animate-spin", (!isMobile && isCollapsed) ? "" : "mr-3")} />
+          ) : (
+            <LogOut className={cn("h-5 w-5 shrink-0", (!isMobile && isCollapsed) ? "" : "mr-3")} />
+          )}
+          {(isMobile || !isCollapsed) && <span>{isLoggingOut ? "Logging out..." : "Log Out"}</span>}
         </Button>
       </div>
     </div>

@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Mail, Loader2, CheckCircle2, Terminal } from "lucide-react";
+import { ArrowLeft, Mail, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authClient } from "@/lib/auth/auth-client";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -20,17 +19,27 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setIsLoading(true);
     
-    const { data, error } = await authClient.forgetPassword({
-      email: email,
-      redirectTo: "/reset-password"
-    });
+    try {
+      const res = await fetch("/api/auth/request-password-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email,
+          redirectTo: "/reset-password"
+        }),
+      });
 
-    setIsLoading(false);
-    
-    if (error) {
-      toast.error(error.message || "Failed to send reset link");
-    } else {
-      setIsSuccess(true);
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data?.message || "Failed to send reset link");
+      } else {
+        setIsSuccess(true);
+      }
+    } catch (err) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,10 +64,10 @@ export default function ForgotPasswordPage() {
           <CardContent>
             {isSuccess ? (
               <div className="flex flex-col items-center justify-center py-6 text-center animate-fade-in">
-                <Terminal className="w-12 h-12 text-teal-500 mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Check your terminal</h3>
+                <CheckCircle2 className="w-12 h-12 text-teal-500 mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Check your email</h3>
                 <p className="text-sm text-muted-foreground">
-                  Since this is a demo environment without an email server configured, the password reset link has been logged to your Next.js server terminal. Please check there to continue!
+                  We&apos;ve sent password reset instructions to <strong>{email}</strong>. Please check your inbox (and spam folder) to continue.
                 </p>
               </div>
             ) : (

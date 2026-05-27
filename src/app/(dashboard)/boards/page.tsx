@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,9 +6,11 @@ import Link from "next/link";
 import { getBoards } from "@/actions/board-actions";
 import { formatDistanceToNow } from "date-fns";
 import { Suspense } from "react";
+import { unstable_noStore as noStore } from "next/cache";
 import BoardsLoading from "./loading";
 
 async function BoardsContent() {
+  noStore();
   const { data: boards, error } = await getBoards();
 
   return (

@@ -279,6 +279,9 @@ export async function createTag(boardId: string, name: string, color: string) {
       color,
     }).returning();
 
+    // Touch board updatedAt
+    await db.update(boards).set({ updatedAt: new Date() }).where(eq(boards.id, boardId));
+
     revalidatePath(`/boards/${boardId}`);
     return { data: newTag };
   } catch (error: any) {
@@ -306,6 +309,9 @@ export async function toggleTaskTag(taskId: string, boardId: string, tagId: stri
         tagId,
       });
     }
+
+    // Touch board updatedAt
+    await db.update(boards).set({ updatedAt: new Date() }).where(eq(boards.id, boardId));
 
     // Broadcast tag updates to private board channel
     await triggerEvent(`private-board-${boardId}`, "task-tags-updated", {

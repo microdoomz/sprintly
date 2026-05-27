@@ -19,6 +19,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -77,12 +78,14 @@ export default function RegisterPage() {
 
   const handleGoogleLogin = async () => {
     try {
+      setIsGoogleLoading(true);
       await signIn.social({
         provider: "google",
         callbackURL: "/dashboard",
       });
     } catch (err) {
       toast.error("Failed to log in with Google");
+      setIsGoogleLoading(false);
     }
   };
 
@@ -189,9 +192,16 @@ export default function RegisterPage() {
             variant="outline"
             className="w-full"
             onClick={handleGoogleLogin}
-            disabled={isLoading}
+            disabled={isLoading || isGoogleLoading}
           >
-            Google
+            {isGoogleLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Connecting...
+              </>
+            ) : (
+              "Google"
+            )}
           </Button>
         </CardContent>
         <CardFooter>

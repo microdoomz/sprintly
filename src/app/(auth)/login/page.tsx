@@ -17,6 +17,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleCredentialsLogin = async (e: React.FormEvent) => {
@@ -76,12 +77,14 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     try {
+      setIsGoogleLoading(true);
       await signIn.social({
         provider: "google",
         callbackURL: "/dashboard",
       });
     } catch (err) {
       toast.error("Failed to log in with Google");
+      setIsGoogleLoading(false);
     }
   };
 
@@ -162,9 +165,16 @@ export default function LoginPage() {
             variant="outline"
             className="w-full"
             onClick={handleGoogleLogin}
-            disabled={isLoading}
+            disabled={isLoading || isGoogleLoading}
           >
-            Google
+            {isGoogleLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Connecting...
+              </>
+            ) : (
+              "Google"
+            )}
           </Button>
         </CardContent>
         <CardFooter>
