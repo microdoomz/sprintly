@@ -34,7 +34,10 @@ This project was built to demonstrate proficiency in modern web development arch
 - **👥 Collaboration & Permissions:** Invite users, manage board memberships, remove members, or transfer ownership seamlessly.
 - **⌨️ Command Palette:** Press `Cmd+K` (or `Ctrl+K`) anywhere in the app for lightning-fast, keyboard-driven navigation.
 - **🎨 Liquid Glass UI:** Apple-inspired frosted glass components with dynamic animated mesh gradients, dark-mode first aesthetic using Tailwind CSS and `shadcn/ui`.
+- **⚡ Instant UX & Optimistic UI:** Global transition spinners on action buttons and instant Suspense skeleton streaming on all dashboard navigation.
+- **📱 Mobile Optimized:** Full touch-sensor support for Kanban drag-and-drop on mobile devices.
 - **⚙️ Board Settings:** Full CRUD operations for boards, including customizable titles, descriptions, icons, and soft deletion.
+- **✉️ Email Integration:** Resend API integration for password reset flows.
 
 ---
 
