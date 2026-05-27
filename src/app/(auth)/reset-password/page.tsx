@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { resetPassword } from "@/lib/auth/auth-client";
 
 function ResetPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,19 +36,13 @@ function ResetPasswordForm() {
     setIsLoading(true);
     
     try {
-      const res = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          newPassword: password,
-          token: token
-        }),
+      const { data, error } = await resetPassword({
+        newPassword: password,
+        token: token
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data?.message || "Failed to reset password. The link might have expired.");
+      if (error) {
+        toast.error(error.message || "Failed to reset password. The link might have expired.");
       } else {
         setIsSuccess(true);
         setTimeout(() => {

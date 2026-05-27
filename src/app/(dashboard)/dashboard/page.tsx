@@ -11,8 +11,10 @@ import { redirect } from "next/navigation";
 import { CreateBoardDialog } from "@/components/boards/create-board-dialog";
 import { DashboardTiles } from "@/components/dashboard/dashboard-tiles";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { getBoards } from "@/actions/board-actions";
 import { activityLogs } from "@/lib/db/schema";
 import { Suspense } from "react";
+import { SmartLink } from "@/components/ui/smart-link";
 import { unstable_noStore as noStore } from "next/cache";
 import DashboardLoading from "./loading";
 
@@ -159,7 +161,7 @@ async function DashboardContent() {
             ) : (
               <div className="grid gap-4 sm:grid-cols-2">
                 {myBoards.slice(0, 4).map((board) => (
-                  <Link key={board.id} href={`/boards/${board.id}`}>
+                  <SmartLink key={board.id} href={`/boards/${board.id}`}>
                     <div className="group rounded-lg border p-4 hover:border-primary transition flex flex-col space-y-2 cursor-pointer bg-card hover:bg-accent/50 relative overflow-hidden h-28 justify-between">
                       <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
                       <div className="flex items-center justify-between">
@@ -170,7 +172,7 @@ async function DashboardContent() {
                         {board.description || "No description provided."}
                       </div>
                     </div>
-                  </Link>
+                  </SmartLink>
                 ))}
               </div>
             )}

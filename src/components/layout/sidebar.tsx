@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, CheckSquare, Settings, LogOut, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { signOut } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
+import { SmartLink } from "@/components/ui/smart-link";
 
 const routes = [
   {
@@ -56,7 +56,7 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
       <div className="px-3 py-2 flex-1 flex flex-col">
         {/* Brand Header & Toggle */}
         <div className={cn("flex items-center justify-between mb-8 transition-all duration-300", (!isMobile && isCollapsed) ? "flex-col justify-center gap-4 pl-0" : "px-3")}>
-          <Link href="/dashboard" className="flex items-center">
+          <SmartLink href="/dashboard" className="flex items-center">
             <div className={cn(
               "relative h-8 w-8 bg-primary rounded-md flex items-center justify-center shrink-0 transition-all duration-300",
               (!isMobile && isCollapsed) ? "" : "mr-4"
@@ -88,7 +88,7 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
             const isActive = pathname === route.href || pathname.startsWith(`${route.href}/`);
             
             return (
-              <Link
+              <SmartLink
                 key={route.href}
                 href={route.href}
                 className={cn(
@@ -101,7 +101,7 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
                   <route.icon className={cn("h-5 w-5 shrink-0 transition-all duration-300", (!isMobile && isCollapsed) ? "" : "mr-3", route.color)} />
                   {(isMobile || !isCollapsed) && <span className="truncate">{route.label}</span>}
                 </div>
-              </Link>
+              </SmartLink>
             );
           })}
         </div>

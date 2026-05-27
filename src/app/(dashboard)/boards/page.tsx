@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreateBoardDialog } from "@/components/boards/create-board-dialog";
 import Link from "next/link";
+import { SmartLink } from "@/components/ui/smart-link";
 import { getBoards } from "@/actions/board-actions";
 import { formatDistanceToNow } from "date-fns";
 import { Suspense } from "react";
@@ -46,7 +47,7 @@ async function BoardsContent() {
           </CreateBoardDialog>
 
           {boards?.map((board) => (
-            <Link key={board.id} href={`/boards/${board.id}`}>
+            <SmartLink key={board.id} href={`/boards/${board.id}`}>
               <Card className="h-48 hover:border-primary transition cursor-pointer group flex flex-col overflow-hidden relative">
                 <div className="h-2 w-full absolute top-0 left-0" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
                 <CardHeader className="pt-6">

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { checkEmailAuthMethod } from "@/actions/auth-actions";
+import { forgetPassword } from "@/lib/auth/auth-client";
 
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -37,19 +38,13 @@ export default function ForgotPasswordPage() {
         return;
       }
 
-      const res = await fetch("/api/auth/forget-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email,
-          redirectTo: "/reset-password" // This relies on the reset-password page handling the token
-        }),
+      const { data, error } = await forgetPassword({
+        email: email,
+        redirectTo: "/reset-password",
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data?.message || "Failed to send reset link");
+      if (error) {
+        toast.error(error.message || "Failed to send reset link");
       } else {
         setIsSuccess(true);
       }

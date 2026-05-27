@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { SmartLink } from "@/components/ui/smart-link";
 import { checkEmailAuthMethod } from "@/actions/auth-actions";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -112,15 +113,12 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2 text-left">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm font-medium text-primary hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                    <SmartLink href="/forgot-password" className="ml-auto inline-block text-sm underline opacity-70 hover:opacity-100">
+                      Forgot your password?
+                    </SmartLink>
+                  </div>
               <div className="relative">
                 <Input
                   id="password"
