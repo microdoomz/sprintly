@@ -3,6 +3,7 @@ import { Inter, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { GlobalLoader } from "@/components/layout/global-loader";
+import { Prefetcher } from "@/components/layout/prefetcher";
 import "./globals.css";
 
 const inter = Inter({
@@ -34,10 +35,11 @@ export default function RootLayout({
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem={false}
+          enableSystem
           disableTransitionOnChange
         >
           <GlobalLoader />
+          <Prefetcher />
           {/* Dynamic Animated Background - Global */}
           <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-background">
             <div className="absolute -top-[25%] -left-[10%] w-[50%] h-[50%] bg-teal-600/10 blur-[120px] rounded-full animate-pulse-slow dark:mix-blend-screen" />

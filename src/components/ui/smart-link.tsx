@@ -16,11 +16,6 @@ export function SmartLink({ href, className, children, ...props }: SmartLinkProp
   const pathname = usePathname();
   const setIsNavigating = useNavigationStore((state) => state.setIsNavigating);
 
-  useEffect(() => {
-    // Whenever the pathname changes, we assume any pending navigation is done.
-    setIsNavigating(false, null);
-  }, [pathname, setIsNavigating]);
-
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     // If it's a modified click (Ctrl, Cmd, Shift), let the browser handle it (new tab)
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {

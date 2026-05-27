@@ -2,12 +2,22 @@
 
 import { useNavigationStore } from "@/hooks/use-navigation-store";
 import { useEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 export function GlobalLoader() {
   const isNavigating = useNavigationStore((state) => state.isNavigating);
   const navigatingTo = useNavigationStore((state) => state.navigatingTo);
+  const setIsNavigating = useNavigationStore((state) => state.setIsNavigating);
   const [show, setShow] = useState(false);
+  
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Clear navigation state whenever the URL changes
+  useEffect(() => {
+    setIsNavigating(false, null);
+  }, [pathname, searchParams, setIsNavigating]);
 
   // Debounce the showing slightly to avoid flashing for very fast transitions
   useEffect(() => {
