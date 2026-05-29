@@ -21,7 +21,7 @@ export const auth = betterAuth({
     enabled: true,
     async sendResetPassword({ url, user }: { url: string; user: any }) {
       try {
-        await resend.emails.send({
+        const { data, error } = await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL || "Sprintly <onboarding@resend.dev>",
           to: user.email,
           subject: "Reset your Sprintly password",
@@ -45,11 +45,18 @@ export const auth = betterAuth({
             </div>
           `,
         });
-        console.log(`Password reset email sent to ${user.email}`);
+        
+        // Always log the reset link to terminal for easy local testing
+        console.log(`\n🔑 PASSWORD RESET LINK FOR ${user.email}:\n${url}\n`);
+
+        if (error) {
+          console.error("Failed to send reset email via Resend:", error);
+        } else {
+          console.log(`Password reset email sent to ${user.email} via Resend.`);
+        }
       } catch (error) {
-        console.error("Failed to send reset email via Resend:", error);
-        // Also log the URL to terminal as fallback
-        console.log(`\nFallback - PASSWORD RESET LINK FOR ${user.email}: ${url}\n`);
+        console.error("Exception while sending reset email:", error);
+        console.log(`\n🔑 Fallback - PASSWORD RESET LINK FOR ${user.email}:\n${url}\n`);
       }
     },
   },
