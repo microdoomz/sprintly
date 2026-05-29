@@ -19,9 +19,8 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    passwordReset: {
-      async sendResetPassword({ url, user }: { url: string; user: any }) {
-        try {
+    async sendResetPassword({ url, user }: { url: string; user: any }) {
+      try {
         await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL || "Sprintly <onboarding@resend.dev>",
           to: user.email,
@@ -51,7 +50,6 @@ export const auth = betterAuth({
         console.error("Failed to send reset email via Resend:", error);
         // Also log the URL to terminal as fallback
         console.log(`\nFallback - PASSWORD RESET LINK FOR ${user.email}: ${url}\n`);
-      }
       }
     },
   },
