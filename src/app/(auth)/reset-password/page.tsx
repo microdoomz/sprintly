@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { TiltCard } from "@/components/ui/tilt-card";
 import { resetPassword } from "@/lib/auth/auth-client";
 
 function ResetPasswordForm() {
@@ -136,19 +137,21 @@ export default function ResetPasswordPage() {
           Back to Login
         </Link>
         
-        <Card className="glass border-white/5 bg-black/40 backdrop-blur-xl shadow-2xl">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold">Create new password</CardTitle>
-            <CardDescription>
-              Enter a new password for your account.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Suspense fallback={<div className="flex justify-center p-4"><Loader2 className="animate-spin w-6 h-6 text-teal-500" /></div>}>
-              <ResetPasswordForm />
-            </Suspense>
-          </CardContent>
-        </Card>
+        <TiltCard tiltMax={4}>
+          <Card className="glass border-white/5 bg-black/40 backdrop-blur-xl shadow-2xl">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold">Create new password</CardTitle>
+              <CardDescription>
+                Enter a new password for your account.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<div className="flex justify-center p-4"><Loader2 className="animate-spin w-6 h-6 text-teal-500" /></div>}>
+                <ResetPasswordForm />
+              </Suspense>
+            </CardContent>
+          </Card>
+        </TiltCard>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CreateBoardDialog } from "@/components/boards/create-board-dialog";
 import Link from "next/link";
 import { SmartLink } from "@/components/ui/smart-link";
+import { TiltCard } from "@/components/ui/tilt-card";
 import { getBoards } from "@/actions/board-actions";
 import { formatDistanceToNow } from "date-fns";
 import { Suspense } from "react";
@@ -47,30 +48,32 @@ async function BoardsContent() {
           </CreateBoardDialog>
 
           {boards?.map((board) => (
-            <SmartLink key={board.id} href={`/boards/${board.id}`}>
-              <Card className="h-48 hover:border-primary transition cursor-pointer group flex flex-col overflow-hidden relative">
-                <div className="h-2 w-full absolute top-0 left-0" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
-                <CardHeader className="pt-6">
-                  <CardTitle className="flex justify-between items-start">
-                    {board.title}
-                  </CardTitle>
-                  {board.description && (
-                    <CardDescription className="line-clamp-2 mt-2">
-                      {board.description}
-                    </CardDescription>
-                  )}
-                </CardHeader>
-                <CardContent className="mt-auto flex justify-between items-center pb-4">
-                  <span className="text-xs text-muted-foreground">
-                    Updated {formatDistanceToNow(new Date(board.updatedAt), { addSuffix: true })}
-                  </span>
-                  <div className="flex -space-x-2">
-                    {/* Real avatars would go here, mock for now */}
-                    <div className="h-6 w-6 rounded-full bg-primary/20 border border-background flex items-center justify-center text-[10px] text-primary">JD</div>
-                  </div>
-                </CardContent>
-              </Card>
-            </SmartLink>
+            <TiltCard key={board.id}>
+              <SmartLink href={`/boards/${board.id}`}>
+                <Card className="h-48 hover:border-primary transition cursor-pointer group flex flex-col overflow-hidden relative">
+                  <div className="h-2 w-full absolute top-0 left-0" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
+                  <CardHeader className="pt-6">
+                    <CardTitle className="flex justify-between items-start">
+                      {board.title}
+                    </CardTitle>
+                    {board.description && (
+                      <CardDescription className="line-clamp-2 mt-2">
+                        {board.description}
+                      </CardDescription>
+                    )}
+                  </CardHeader>
+                  <CardContent className="mt-auto flex justify-between items-center pb-4">
+                    <span className="text-xs text-muted-foreground">
+                      Updated {formatDistanceToNow(new Date(board.updatedAt), { addSuffix: true })}
+                    </span>
+                    <div className="flex -space-x-2">
+                      {/* Real avatars would go here, mock for now */}
+                      <div className="h-6 w-6 rounded-full bg-primary/20 border border-background flex items-center justify-center text-[10px] text-primary">JD</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </SmartLink>
+            </TiltCard>
           ))}
         </div>
       )}

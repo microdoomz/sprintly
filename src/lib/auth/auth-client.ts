@@ -12,6 +12,8 @@ export const {
   signOut,
   useSession,
   getSession,
-  forgetPassword,
-  resetPassword,
-} = authClient as any;
+  updateUser,
+} = authClient;
+
+export const requestPasswordReset = (authClient as any).requestPasswordReset;
+export const resetPassword = (authClient as any).resetPassword;

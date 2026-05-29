@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { TiltCard } from "@/components/ui/tilt-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -66,72 +67,80 @@ export function DashboardTiles({ tasks, boards = [] }: DashboardTilesProps) {
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Total Boards Tile */}
-        <Card 
-          className="cursor-pointer hover:border-primary/50 hover:bg-accent/50 transition-all group"
-          onClick={() => setActiveTab("boards")}
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Boards</CardTitle>
-            <Folder className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{boards.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Across your workspaces
-            </p>
-          </CardContent>
-        </Card>
+        <TiltCard>
+          <Card 
+            className="cursor-pointer hover:border-primary/50 hover:bg-accent/50 transition-all group"
+            onClick={() => setActiveTab("boards")}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Boards</CardTitle>
+              <Folder className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{boards.length}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Across your workspaces
+              </p>
+            </CardContent>
+          </Card>
+        </TiltCard>
 
         {/* To Do Tile */}
-        <Card 
-          className="cursor-pointer hover:border-primary/50 hover:bg-accent/50 transition-all group"
-          onClick={() => setActiveTab("todo")}
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">To Do Tasks</CardTitle>
-            <ListTodo className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{todoTasks.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Tasks waiting to be started
-            </p>
-          </CardContent>
-        </Card>
+        <TiltCard>
+          <Card 
+            className="cursor-pointer hover:border-primary/50 hover:bg-accent/50 transition-all group"
+            onClick={() => setActiveTab("todo")}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">To Do Tasks</CardTitle>
+              <ListTodo className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{todoTasks.length}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Tasks waiting to be started
+              </p>
+            </CardContent>
+          </Card>
+        </TiltCard>
 
         {/* In Progress Tile */}
-        <Card 
-          className="cursor-pointer hover:border-primary/50 hover:bg-accent/50 transition-all group"
-          onClick={() => setActiveTab("in-progress")}
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tasks In Progress</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{inProgressTasks.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Currently actively being worked on
-            </p>
-          </CardContent>
-        </Card>
+        <TiltCard>
+          <Card 
+            className="cursor-pointer hover:border-primary/50 hover:bg-accent/50 transition-all group"
+            onClick={() => setActiveTab("in-progress")}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Tasks In Progress</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{inProgressTasks.length}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Currently actively being worked on
+              </p>
+            </CardContent>
+          </Card>
+        </TiltCard>
 
         {/* Completed Tile */}
-        <Card 
-          className="cursor-pointer hover:border-primary/50 hover:bg-accent/50 transition-all group"
-          onClick={() => setActiveTab("done")}
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed Tasks</CardTitle>
-            <CheckSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{completedTasks.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Successfully completed
-            </p>
-          </CardContent>
-        </Card>
+        <TiltCard>
+          <Card 
+            className="cursor-pointer hover:border-primary/50 hover:bg-accent/50 transition-all group"
+            onClick={() => setActiveTab("done")}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Completed Tasks</CardTitle>
+              <CheckSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{completedTasks.length}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Successfully completed
+              </p>
+            </CardContent>
+          </Card>
+        </TiltCard>
       </div>
 
       <Dialog open={activeTab !== null} onOpenChange={(open) => !open && setActiveTab(null)}>

@@ -228,3 +228,39 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-muted-foreground);
 }
+
+/* Page Transitions */
+.page-transition {
+  opacity: 0;
+  transform: translateY(6px);
+  will-change: opacity, transform;
+}
+
+.page-transition.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+/* 3D Tilt Card */
+.tilt-card {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.15s ease-out;
+}
+
+.tilt-card .tilt-spotlight {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  mix-blend-mode: soft-light;
+}
+
+.tilt-card:hover .tilt-spotlight {
+  opacity: 1;
+}

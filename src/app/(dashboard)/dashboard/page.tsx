@@ -15,6 +15,7 @@ import { getBoards } from "@/actions/board-actions";
 import { activityLogs } from "@/lib/db/schema";
 import { Suspense } from "react";
 import { SmartLink } from "@/components/ui/smart-link";
+import { TiltCard } from "@/components/ui/tilt-card";
 import { unstable_noStore as noStore } from "next/cache";
 import DashboardLoading from "./loading";
 
@@ -161,18 +162,20 @@ async function DashboardContent() {
             ) : (
               <div className="grid gap-4 sm:grid-cols-2">
                 {myBoards.slice(0, 4).map((board) => (
-                  <SmartLink key={board.id} href={`/boards/${board.id}`}>
-                    <div className="group rounded-lg border p-4 hover:border-primary transition flex flex-col space-y-2 cursor-pointer bg-card hover:bg-accent/50 relative overflow-hidden h-28 justify-between">
-                      <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
-                      <div className="flex items-center justify-between">
-                        <div className="font-semibold text-sm line-clamp-1">{board.title}</div>
-                        <div className="h-2 w-2 rounded-full" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
+                  <TiltCard key={board.id}>
+                    <SmartLink href={`/boards/${board.id}`}>
+                      <div className="group rounded-lg border p-4 hover:border-primary transition flex flex-col space-y-2 cursor-pointer bg-card hover:bg-accent/50 relative overflow-hidden h-28 justify-between">
+                        <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
+                        <div className="flex items-center justify-between">
+                          <div className="font-semibold text-sm line-clamp-1">{board.title}</div>
+                          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
+                        </div>
+                        <div className="text-xs text-muted-foreground line-clamp-2">
+                          {board.description || "No description provided."}
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground line-clamp-2">
-                        {board.description || "No description provided."}
-                      </div>
-                    </div>
-                  </SmartLink>
+                    </SmartLink>
+                  </TiltCard>
                 ))}
               </div>
             )}

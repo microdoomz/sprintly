@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, LayoutDashboard, Zap, Shield, Users, ArrowUpRight, CheckSquare } from "lucide-react";
 import { SmartLink } from "@/components/ui/smart-link";
 import { TransitionLink } from "@/components/ui/transition-link";
+import { TiltCard } from "@/components/ui/tilt-card";
 
 export default function Home() {
   return (
@@ -60,44 +61,50 @@ export default function Home() {
 
         {/* Feature Grid - Liquid Glass Cards */}
         <div id="features" className="mx-auto max-w-7xl mt-32 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 hover:bg-white/10 transition-all duration-500 hover:-translate-y-1 shadow-2xl shadow-black/50 group">
-            <div className="h-12 w-12 rounded-2xl bg-teal-500/10 flex items-center justify-center mb-6 border border-teal-500/20 group-hover:bg-teal-500/20 transition-colors">
-              <LayoutDashboard className="h-6 w-6 text-teal-300" />
+          <TiltCard glowColor="rgba(20, 184, 166, 0.2)">
+            <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 hover:bg-white/10 transition-all duration-500 shadow-2xl shadow-black/50 group">
+              <div className="h-12 w-12 rounded-2xl bg-teal-500/10 flex items-center justify-center mb-6 border border-teal-500/20 group-hover:bg-teal-500/20 transition-colors">
+                <LayoutDashboard className="h-6 w-6 text-teal-300" />
+              </div>
+              <h3 className="text-xl font-semibold text-white/90 mb-3 tracking-tight">Intuitive Boards</h3>
+              <p className="text-white/50 leading-relaxed font-light mb-4">Organize tasks effortlessly with drag-and-drop Kanban boards that adapt to your workflow seamlessly.</p>
+              <ul className="space-y-2 text-sm text-white/40">
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Custom Tags & Colors</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Drag and Drop UI</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Advanced Filtering</li>
+              </ul>
             </div>
-            <h3 className="text-xl font-semibold text-white/90 mb-3 tracking-tight">Intuitive Boards</h3>
-            <p className="text-white/50 leading-relaxed font-light mb-4">Organize tasks effortlessly with drag-and-drop Kanban boards that adapt to your workflow seamlessly.</p>
-            <ul className="space-y-2 text-sm text-white/40">
-              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Custom Tags & Colors</li>
-              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Drag and Drop UI</li>
-              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Advanced Filtering</li>
-            </ul>
-          </div>
+          </TiltCard>
 
-          <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 hover:bg-white/10 transition-all duration-500 hover:-translate-y-1 shadow-2xl shadow-black/50 group">
-            <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-6 border border-cyan-500/20 group-hover:bg-cyan-500/20 transition-colors">
-              <Users className="h-6 w-6 text-cyan-300" />
+          <TiltCard glowColor="rgba(6, 182, 212, 0.2)">
+            <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 hover:bg-white/10 transition-all duration-500 shadow-2xl shadow-black/50 group">
+              <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-6 border border-cyan-500/20 group-hover:bg-cyan-500/20 transition-colors">
+                <Users className="h-6 w-6 text-cyan-300" />
+              </div>
+              <h3 className="text-xl font-semibold text-white/90 mb-3 tracking-tight">Real-time Collaboration</h3>
+              <p className="text-white/50 leading-relaxed font-light mb-4">Work together in perfect sync. See updates instantly as your teammates move tasks and make changes.</p>
+              <ul className="space-y-2 text-sm text-white/40">
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Live WebSocket Sync</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Shared Workspaces</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Activity Timelines</li>
+              </ul>
             </div>
-            <h3 className="text-xl font-semibold text-white/90 mb-3 tracking-tight">Real-time Collaboration</h3>
-            <p className="text-white/50 leading-relaxed font-light mb-4">Work together in perfect sync. See updates instantly as your teammates move tasks and make changes.</p>
-            <ul className="space-y-2 text-sm text-white/40">
-              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Live WebSocket Sync</li>
-              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Shared Workspaces</li>
-              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Activity Timelines</li>
-            </ul>
-          </div>
+          </TiltCard>
 
-          <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 hover:bg-white/10 transition-all duration-500 hover:-translate-y-1 shadow-2xl shadow-black/50 sm:col-span-2 lg:col-span-1 group">
-            <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
-              <Zap className="h-6 w-6 text-blue-300" />
+          <TiltCard glowColor="rgba(59, 130, 246, 0.2)">
+            <div className="rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl p-8 hover:bg-white/10 transition-all duration-500 shadow-2xl shadow-black/50 sm:col-span-2 lg:col-span-1 group">
+              <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
+                <Zap className="h-6 w-6 text-blue-300" />
+              </div>
+              <h3 className="text-xl font-semibold text-white/90 mb-3 tracking-tight">Lightning Fast</h3>
+              <p className="text-white/50 leading-relaxed font-light mb-4">Experience a fluid, app-like interface built on modern web technologies for instant responsiveness.</p>
+              <ul className="space-y-2 text-sm text-white/40">
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Edge Caching</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Instant Navigation</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Optimized Performance</li>
+              </ul>
             </div>
-            <h3 className="text-xl font-semibold text-white/90 mb-3 tracking-tight">Lightning Fast</h3>
-            <p className="text-white/50 leading-relaxed font-light mb-4">Experience a fluid, app-like interface built on modern web technologies for instant responsiveness.</p>
-            <ul className="space-y-2 text-sm text-white/40">
-              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Edge Caching</li>
-              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Instant Navigation</li>
-              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Optimized Performance</li>
-            </ul>
-          </div>
+          </TiltCard>
         </div>
         
 

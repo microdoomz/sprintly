@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { GlobalLoader } from "@/components/layout/global-loader";
 import { Prefetcher } from "@/components/layout/prefetcher";
+import { PageTransition } from "@/components/layout/page-transition";
 import "./globals.css";
 
 const inter = Inter({
@@ -50,7 +51,9 @@ export default function RootLayout({
             <div className="absolute -bottom-[20%] left-[20%] w-[60%] h-[60%] bg-blue-600/10 blur-[120px] rounded-full animate-pulse-slow dark:mix-blend-screen" style={{ animationDelay: '4s' }} />
           </div>
           <div className="relative z-0">
-            {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           </div>
           <Toaster richColors position="top-right" />
         </ThemeProvider>

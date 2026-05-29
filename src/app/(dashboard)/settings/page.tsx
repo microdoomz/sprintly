@@ -3,9 +3,8 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AvatarUpload } from "@/components/settings/avatar-upload";
 
 export default async function SettingsPage() {
   const session = await auth.api.getSession({
@@ -33,30 +32,12 @@ export default async function SettingsPage() {
               Update your personal information.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center gap-6">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src={session.user.image || ""} />
-                <AvatarFallback className="text-2xl bg-primary/20 text-primary">
-                  {session.user.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <Button variant="outline">Change Avatar</Button>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="name">Display Name</Label>
-                <Input id="name" defaultValue={session.user.name} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input id="email" defaultValue={session.user.email} disabled />
-                <p className="text-xs text-muted-foreground">Email cannot be changed.</p>
-              </div>
-            </div>
-
-            <Button>Save Changes</Button>
+          <CardContent>
+            <AvatarUpload
+              currentImage={session.user.image || null}
+              currentName={session.user.name}
+              userEmail={session.user.email}
+            />
           </CardContent>
         </Card>
 

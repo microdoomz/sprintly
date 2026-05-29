@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Zap, Layers, Lock, Globe, RefreshCcw, Bell } from "lucide-react";
+import { TiltCard } from "@/components/ui/tilt-card";
 
 export default function FeaturesPage() {
   const features = [
@@ -55,15 +56,17 @@ export default function FeaturesPage() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl mb-24">
           {features.map((feature, i) => (
-            <div key={i} className="glass p-8 rounded-2xl border border-white/5 hover:border-teal-500/30 transition-colors bg-black/20 dark:bg-black/20 light:bg-white/50">
-              <div className="bg-white/5 w-16 h-16 rounded-xl flex items-center justify-center mb-6">
-                {feature.icon}
+            <TiltCard key={i}>
+              <div className="glass p-8 rounded-2xl border border-white/5 hover:border-teal-500/30 transition-colors bg-black/20 dark:bg-black/20 light:bg-white/50">
+                <div className="bg-white/5 w-16 h-16 rounded-xl flex items-center justify-center mb-6">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
+            </TiltCard>
           ))}
         </div>
       </div>
