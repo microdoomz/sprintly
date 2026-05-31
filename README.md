@@ -1,94 +1,105 @@
-# 🏃 Sprintly
+# 🏃 Sprintly (Task Manager App)
 
 <p align="center">
-  <em>Modern, collaborative task management for teams and individuals.</em>
+  <em>Modern, collaborative task management built for the Indpro Intern Assignment.</em>
 </p>
 
 ---
 
+## 🔗 Live Deployment
+
+Sprintly is a Full-Stack Next.js application. Both the frontend and backend are deployed together on Vercel.
+
+- **Live Demo Link:** [Insert Vercel URL Here]
+- **GitHub Repository:** [Insert GitHub URL Here]
+
+*(Note: Since Next.js API Routes and Server Actions act as the backend, deploying to Vercel satisfies both the mandatory frontend and optional backend deployment requirements in a single platform).*
+
+---
+
 ## 📖 Table of Contents
-- [About the Project](#-about-the-project)
-- [Features](#-features)
+- [Assignment Requirements](#-assignment-requirements)
 - [Tech Stack](#-tech-stack)
-- [Architecture & Database Schema](#-architecture--database-schema)
-- [Getting Started](#-getting-started)
-- [Usage](#-usage)
+- [Technical Decisions & Architecture](#-technical-decisions--architecture)
 - [Assumptions & Tradeoffs](#-assumptions--tradeoffs)
+- [Features](#-features)
+- [Getting Started Locally](#-getting-started-locally)
 
 ---
 
-## 🚀 About the Project
+## ✅ Assignment Requirements
 
-Sprintly is a production-ready Full-Stack SaaS application built as a comprehensive solution for task management. Designed with a modern, minimalist aesthetic inspired by Linear, Notion, and Vercel, Sprintly simplifies workflows through visual Kanban boards and real-time collaboration.
-
-This project was built to demonstrate proficiency in modern web development architectures, specifically utilizing Next.js 15 App Router, Server Actions, strict TypeScript typing, and real-time WebSockets.
-
----
-
-## ✨ Features
-
-- **🔒 Secure Authentication:** Powered by Better Auth (Email/Password & Session Management).
-- **📋 Real-time Kanban Boards:** Drag-and-drop tasks smoothly across columns using `dnd-kit`. Changes are instantly broadcasted to all connected clients via Pusher WebSockets.
-- **🏷️ Advanced Task Management:** Tasks support custom colored tags, subtask checklists, priorities, due dates, and descriptions via a sleek modal interface.
-- **📈 Comprehensive Dashboard:** View stats with interactive popup modals, recent boards, and an expandable real-time Activity Log.
-- **👥 Collaboration & Permissions:** Invite users, manage board memberships, remove members, or transfer ownership seamlessly.
-- **⌨️ Command Palette:** Press `Cmd+K` (or `Ctrl+K`) anywhere in the app for lightning-fast, keyboard-driven navigation.
-- **🎨 Liquid Glass UI:** Apple-inspired frosted glass components with dynamic animated mesh gradients, dark-mode first aesthetic using Tailwind CSS and `shadcn/ui`.
-- **⚡ Instant UX & Optimistic UI:** Global transition spinners on action buttons and instant Suspense skeleton streaming on all dashboard navigation.
-- **📱 Mobile Optimized:** Full touch-sensor support for Kanban drag-and-drop on mobile devices.
-- **⚙️ Board Settings:** Full CRUD operations for boards, including customizable titles, descriptions, icons, and soft deletion.
-- **✉️ Email Integration:** Resend API integration for password reset flows.
+This project successfully fulfills all mandatory and bonus requirements outlined in the intern assignment:
+- **Auth (Mandatory):** Login & Register flow implemented securely using Better Auth.
+- **Tasks (Mandatory):** Create, update, and delete tasks.
+- **Stages (Mandatory):** Tasks support Todo, In Progress, and Done columns.
+- **UI (Mandatory):** Clean, responsive design with comprehensive loading skeletons, optimistic updates, and error handling.
+- **Database Integration (Bonus):** Fully integrated with Neon Serverless Postgres using Drizzle ORM.
+- **Backend Authentication (Bonus):** Secure session-based backend authentication (not just client-side).
+- **Custom Backend APIs (Bonus):** Backend logic handled securely via Next.js Server Actions and custom API routes.
 
 ---
 
 ## 🛠 Tech Stack
 
-**Frontend:**
-- [Next.js 15](https://nextjs.org/) (App Router)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS v4](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/) (Radix Primitives)
-- [dnd-kit](https://dndkit.com/) (Drag & Drop)
-- [Lucide React](https://lucide.dev/) (Icons)
-
-**Backend:**
-- Next.js Server Actions (No external API routes for CRUD)
-- [Neon Serverless Postgres](https://neon.tech/)
-- [Drizzle ORM](https://orm.drizzle.team/)
-- [Better Auth](https://better-auth.com/)
-- [Pusher](https://pusher.com/) (WebSockets for Real-time sync)
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4 & shadcn/ui
+- **Database:** Neon Serverless Postgres
+- **ORM:** Drizzle ORM
+- **Authentication:** Better Auth (Session-based)
+- **Drag & Drop:** `dnd-kit`
 
 ---
 
-## 📐 Architecture & Database Schema
+## 📐 Technical Decisions & Architecture
 
-Sprintly uses a strictly typed, relational database schema deployed on Neon PostgreSQL.
-
-- `users`: Core account information.
-- `boards`: Projects/workspaces owned by a user.
-- `board_members`: Junction table handling shared access and permissions.
-- `tasks`: Core entities containing `status` (column) and `position` (order).
-- `subtasks`: Checklists related to specific tasks.
-- `tags` / `task_tags`: Many-to-many relationship allowing custom colored labels on tasks.
-
-All data mutations occur securely on the server via **Next.js Server Actions**, ensuring typesafe inputs and preventing client-side spoofing.
+1. **Next.js 15 (App Router) over Separate Frontend/Backend:** 
+   I chose a monolithic full-stack framework rather than separating React (Frontend) and Node/Express (Backend). This decision guarantees end-to-end type safety, eliminates the need for manual CORS configuration, and drastically reduces boilerplate.
+2. **Server Actions for Data Mutations:**
+   Instead of traditional REST APIs, all database mutations (creating/deleting tasks) are executed via strictly typed Next.js Server Actions. This prevents client-side spoofing and improves security.
+3. **Dedicated API Routes for Media:**
+   I implemented a custom REST API route (`/api/users/[id]/avatar`) specifically to serve user profile images. This prevents massive base64 strings from bloating standard JSON responses and allows the browser to aggressively cache binary assets.
+4. **Neon Serverless Postgres:**
+   Chosen for its edge compatibility, instant provisioning, and seamless integration with Vercel and Drizzle ORM.
 
 ---
 
-## 🏁 Getting Started
+## 🤔 Assumptions & Tradeoffs
 
-To run Sprintly locally, you will need Node.js installed, as well as access to a PostgreSQL database (like Neon) and a Pusher account.
+1. **Optimistic UI Updates:** 
+   *Tradeoff:* For the Kanban drag-and-drop experience, I implemented optimistic UI updates. This means the UI assumes the backend call will succeed and updates the screen instantly. While this requires more complex client-side state management (handling rollbacks if the server fails), it is a necessary tradeoff to provide a native-feeling, lag-free user experience.
+2. **Avatar Storage:** 
+   *Tradeoff:* Instead of integrating AWS S3 or a heavy blob storage provider, user avatars are stored as base64 data in a dedicated database table (`user_avatars`). This kept the architecture simple and easy to deploy for a 3-4 hour assignment, while maintaining excellent performance via the custom API route.
+3. **Strict Column Structure:** 
+   *Assumption:* The assignment specified "Every task has a stage — Todo, In Progress, Done." I assumed these three stages were strict and sufficient, so custom user-generated columns were not implemented to keep the MVP focused.
+
+---
+
+## ✨ Features
+
+- **🔒 Secure Authentication:** Email/Password & Session Management.
+- **📋 Kanban Boards:** Smooth drag-and-drop interface across columns.
+- **🎨 Liquid Glass UI:** Apple-inspired frosted glass components with dynamic animated mesh gradients and dark-mode aesthetics.
+- **⚡ Instant UX:** Global transition spinners on action buttons and instant Suspense skeleton streaming.
+- **📱 Mobile Optimized:** Full touch-sensor support for Kanban drag-and-drop on mobile devices.
+- **👥 Multiple Boards:** Create and manage distinct boards/workspaces.
+
+---
+
+## 🏁 Getting Started Locally
+
+To run Sprintly locally, you will need Node.js installed and access to a PostgreSQL database.
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/sprintly.git
+git clone [repository-url]
 cd sprintly
 ```
 
 ### 2. Install dependencies
 ```bash
 npm install
-# Note: We enforce specific versions for better-auth and drizzle-orm to prevent conflicts.
 ```
 
 ### 3. Configure Environment Variables
@@ -100,7 +111,6 @@ Fill in the following variables in your `.env` file:
 - `DATABASE_URL`: Your PostgreSQL connection string.
 - `BETTER_AUTH_SECRET`: A random 32-character string.
 - `BETTER_AUTH_URL`: `http://localhost:3000`
-- `PUSHER_APP_ID`, `NEXT_PUBLIC_PUSHER_KEY`, `PUSHER_SECRET`, `NEXT_PUBLIC_PUSHER_CLUSTER`: Your Pusher credentials.
 
 ### 4. Push the Database Schema
 Use Drizzle to push the schema to your database:
@@ -113,25 +123,3 @@ npm run db:push
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## 💡 Usage
-
-1. **Register an Account:** Create a new account from the landing page.
-2. **Create a Board:** Click "New Board" in the sidebar to create a workspace.
-3. **Add Tasks:** Click "Add Task" in the To-Do column.
-4. **Drag & Drop:** Click and hold a task to drag it across the board. If you have another browser window open, you will see it move in real-time!
-5. **Quick Navigation:** Press `Cmd+K` to open the search palette and jump to your profile settings.
-
----
-
-## 🤔 Assumptions & Tradeoffs
-
-- **Manual Scaffolding:** `create-next-app` was skipped to maintain absolute control over the folder architecture and prevent bloated defaults.
-- **Server Actions over API Routes:** We chose Server Actions for all CRUD operations to reduce boilerplate and guarantee end-to-end type safety, making the codebase highly maintainable.
-- **Pusher over Custom WebSockets:** Setting up a custom WebSocket server in a serverless environment (Next.js/Vercel) is notoriously difficult and unreliable. Pusher was chosen to guarantee low-latency, scalable real-time broadcasts without infrastructure overhead.
-- **Minimalist MVP:** Features like email invitations and complex permissions were deferred to keep the MVP focused, complete, and extremely polished.
-
----
-*Built as a showcase for modern full-stack engineering capability.*
