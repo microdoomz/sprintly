@@ -89,7 +89,6 @@ async function DashboardContent() {
           creator: {
             columns: {
               name: true,
-              image: true,
             },
           },
           board: {
@@ -107,7 +106,6 @@ async function DashboardContent() {
           user: {
             columns: {
               name: true,
-              image: true,
             }
           },
           board: {
