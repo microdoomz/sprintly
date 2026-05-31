@@ -39,7 +39,7 @@ export function SmartLink({ href, className, children, ...props }: SmartLinkProp
   };
 
   return (
-    <Link href={href} className={className} onClick={handleClick} prefetch={true} {...props}>
+    <Link href={href} className={className} onClick={handleClick} {...props}>
       {children}
     </Link>
   );

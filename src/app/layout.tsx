@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { Inter, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
-import { GlobalLoader } from "@/components/layout/global-loader";
+
 import { Prefetcher } from "@/components/layout/prefetcher";
 import { PageTransition } from "@/components/layout/page-transition";
 import "./globals.css";
@@ -41,7 +41,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Suspense fallback={null}>
-            <GlobalLoader />
             <Prefetcher />
           </Suspense>
           {/* Dynamic Animated Background - Global */}
