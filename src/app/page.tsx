@@ -5,6 +5,7 @@ import { SmartLink } from "@/components/ui/smart-link";
 import { TransitionLink } from "@/components/ui/transition-link";
 import { TiltCard } from "@/components/ui/tilt-card";
 import { LandingMobileNav } from "@/components/layout/landing-mobile-nav";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
             <SmartLink href="/pricing" className="hover:text-slate-900 dark:hover:text-white transition-colors">Pricing</SmartLink>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <SmartLink href="/login" className="text-sm font-medium text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white transition-colors px-0">
               Log In
             </SmartLink>
