@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { updateAvatar, updateProfile } from "@/actions/settings-actions";
+import { updateAvatar, updateProfile, deleteAvatar } from "@/actions/settings-actions";
 import { updateUser } from "@/lib/auth/auth-client";
 
 interface AvatarUploadProps {
@@ -59,6 +59,23 @@ export function AvatarUpload({ currentImage, currentName, userEmail }: AvatarUpl
     });
   };
 
+  const handleDeleteAvatar = () => {
+    setIsUploading(true);
+    startTransition(async () => {
+      const result = await deleteAvatar();
+      
+      if (result.error) {
+        setIsUploading(false);
+        toast.error(result.error);
+      } else {
+        await updateUser({ image: undefined });
+        setPreview(null);
+        setIsUploading(false);
+        toast.success("Avatar removed successfully!");
+      }
+    });
+  };
+
   const handleSaveProfile = () => {
     if (name === currentName) return;
     startTransition(async () => {
@@ -102,16 +119,23 @@ export function AvatarUpload({ currentImage, currentName, userEmail }: AvatarUpl
             onChange={handleFileChange}
           />
         </div>
-        <Button variant="outline" onClick={handleFileSelect} disabled={isUploading}>
-          {isUploading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Uploading...
-            </>
-          ) : (
-            "Change Avatar"
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleFileSelect} disabled={isUploading}>
+            {isUploading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              "Change Avatar"
+            )}
+          </Button>
+          {preview && (
+            <Button variant="destructive" onClick={handleDeleteAvatar} disabled={isUploading}>
+              Remove
+            </Button>
           )}
-        </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

@@ -91,3 +91,33 @@ export async function updateProfile(name: string) {
     return { error: "Failed to update profile." };
   }
 }
+
+export async function deleteAvatar() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    // Remove the avatar data from user_avatars
+    await db
+      .delete(userAvatars)
+      .where(eq(userAvatars.userId, session.user.id));
+
+    // Clear the image URL from users
+    await db
+      .update(users)
+      .set({ image: null })
+      .where(eq(users.id, session.user.id));
+
+    revalidatePath("/settings");
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to delete avatar:", error);
+    return { error: "Failed to delete avatar." };
+  }
+}
