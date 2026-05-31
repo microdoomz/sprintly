@@ -5,7 +5,11 @@ import { CreateBoardDialog } from "@/components/boards/create-board-dialog";
 import Link from "next/link";
 import { SmartLink } from "@/components/ui/smart-link";
 import { TiltCard } from "@/components/ui/tilt-card";
-import { getBoards } from "@/actions/board-actions";
+import { db } from "@/lib/db";
+import { boardMembers } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { auth } from "@/lib/auth/auth";
+import { headers } from "next/headers";
 import { formatDistanceToNow } from "date-fns";
 import { Suspense } from "react";
 import { unstable_noStore as noStore } from "next/cache";
@@ -13,7 +17,48 @@ import BoardsLoading from "./loading";
 
 async function BoardsContent() {
   noStore();
-  const { data: boards, error } = await getBoards();
+
+  // Single session check — middleware already validated auth.
+  // Previously getBoards() called getSession() again internally.
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+
+  if (!session?.user) {
+    return (
+      <div className="text-red-500 border border-red-500/20 bg-red-500/10 p-4 rounded-md">
+        Unauthorized
+      </div>
+    );
+  }
+
+  // Query boards directly — no redundant session check
+  const userBoards = await db.query.boardMembers.findMany({
+    where: eq(boardMembers.userId, session.user.id),
+    with: {
+      board: {
+        with: {
+          activityLogs: {
+            orderBy: (logs, { desc }) => [desc(logs.createdAt)],
+            limit: 1
+          }
+        }
+      }
+    },
+  });
+
+  const boards = userBoards
+    .map(bm => {
+      const board = bm.board;
+      const latestActivityTime = board?.activityLogs?.[0]?.createdAt;
+      if (latestActivityTime) {
+        board.updatedAt = latestActivityTime;
+      }
+      const { activityLogs, ...restBoard } = board as any;
+      return restBoard;
+    })
+    .filter(b => b && b.deletedAt === null)
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
   return (
     <div className="flex-1 space-y-6">
@@ -32,51 +77,44 @@ async function BoardsContent() {
         </CreateBoardDialog>
       </div>
 
-      {error ? (
-        <div className="text-red-500 border border-red-500/20 bg-red-500/10 p-4 rounded-md">
-          {error}
-        </div>
-      ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <CreateBoardDialog>
-            <div className="group flex h-48 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 bg-transparent hover:border-primary/50 hover:bg-accent/50 transition">
-              <Plus className="h-8 w-8 text-muted-foreground group-hover:text-primary transition" />
-              <span className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-primary transition">
-                Create New Board
-              </span>
-            </div>
-          </CreateBoardDialog>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <CreateBoardDialog>
+          <div className="group flex h-48 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 bg-transparent hover:border-primary/50 hover:bg-accent/50 transition">
+            <Plus className="h-8 w-8 text-muted-foreground group-hover:text-primary transition" />
+            <span className="mt-2 text-sm font-medium text-muted-foreground group-hover:text-primary transition">
+              Create New Board
+            </span>
+          </div>
+        </CreateBoardDialog>
 
-          {boards?.map((board) => (
-            <TiltCard key={board.id}>
-              <SmartLink href={`/boards/${board.id}`}>
-                <Card className="h-48 hover:border-primary transition cursor-pointer group flex flex-col overflow-hidden relative">
-                  <div className="h-2 w-full absolute top-0 left-0" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
-                  <CardHeader className="pt-6">
-                    <CardTitle className="flex justify-between items-start">
-                      {board.title}
-                    </CardTitle>
-                    {board.description && (
-                      <CardDescription className="line-clamp-2 mt-2">
-                        {board.description}
-                      </CardDescription>
-                    )}
-                  </CardHeader>
-                  <CardContent className="mt-auto flex justify-between items-center pb-4">
-                    <span className="text-xs text-muted-foreground">
-                      Updated {formatDistanceToNow(new Date(board.updatedAt), { addSuffix: true })}
-                    </span>
-                    <div className="flex -space-x-2">
-                      {/* Real avatars would go here, mock for now */}
-                      <div className="h-6 w-6 rounded-full bg-primary/20 border border-background flex items-center justify-center text-[10px] text-primary">JD</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </SmartLink>
-            </TiltCard>
-          ))}
-        </div>
-      )}
+        {boards?.map((board) => (
+          <TiltCard key={board.id}>
+            <SmartLink href={`/boards/${board.id}`}>
+              <Card className="h-48 hover:border-primary transition cursor-pointer group flex flex-col overflow-hidden relative">
+                <div className="h-2 w-full absolute top-0 left-0" style={{ backgroundColor: board.coverColor || '#8B5CF6' }} />
+                <CardHeader className="pt-6">
+                  <CardTitle className="flex justify-between items-start">
+                    {board.title}
+                  </CardTitle>
+                  {board.description && (
+                    <CardDescription className="line-clamp-2 mt-2">
+                      {board.description}
+                    </CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent className="mt-auto flex justify-between items-center pb-4">
+                  <span className="text-xs text-muted-foreground">
+                    Updated {formatDistanceToNow(new Date(board.updatedAt), { addSuffix: true })}
+                  </span>
+                  <div className="flex -space-x-2">
+                    <div className="h-6 w-6 rounded-full bg-primary/20 border border-background flex items-center justify-center text-[10px] text-primary">JD</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </SmartLink>
+          </TiltCard>
+        ))}
+      </div>
     </div>
   );
 }

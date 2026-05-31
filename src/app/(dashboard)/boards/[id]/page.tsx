@@ -1,5 +1,6 @@
-import { getBoardById } from "@/actions/board-actions";
-import { getTasksForBoard } from "@/actions/task-actions";
+import { db } from "@/lib/db";
+import { boards, boardMembers, tasks } from "@/lib/db/schema";
+import { eq, and, isNull } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
@@ -15,19 +16,67 @@ import BoardLoading from "./loading";
 
 async function BoardContent({ boardId }: { boardId: string }) {
   noStore();
-  const [boardResult, session, tasksData] = await Promise.all([
-    getBoardById(boardId),
-    auth.api.getSession({ headers: await headers() }),
-    getTasksForBoard(boardId)
-  ]);
-
-  const { data: board, error: boardError } = boardResult;
   
-  if (boardError || !board) {
+  // Single session check — middleware already validated auth.
+  // Previously this page made 4 separate getSession() calls
+  // (page + getBoardById + getTasksForBoard's checkBoardAccess).
+  // Now we do it once and query the DB directly.
+  const session = await auth.api.getSession({ headers: await headers() });
+  const currentUserId = session?.user?.id || "";
+
+  if (!currentUserId) {
     notFound();
   }
 
-  const currentUserId = session?.user?.id || "";
+  // Verify membership and fetch board + tasks all in parallel
+  const [membership, board, boardTasks] = await Promise.all([
+    db.query.boardMembers.findFirst({
+      where: and(
+        eq(boardMembers.boardId, boardId),
+        eq(boardMembers.userId, currentUserId)
+      )
+    }),
+    db.query.boards.findFirst({
+      where: and(
+        eq(boards.id, boardId),
+        isNull(boards.deletedAt)
+      ),
+      with: {
+        members: {
+          with: {
+            user: true
+          }
+        },
+        tags: true
+      }
+    }),
+    db.query.tasks.findMany({
+      where: and(
+        eq(tasks.boardId, boardId),
+        isNull(tasks.deletedAt)
+      ),
+      with: {
+        subtasks: true,
+        taskTags: {
+          with: {
+            tag: true
+          }
+        },
+        creator: {
+          columns: {
+            id: true,
+            name: true,
+            image: true,
+          }
+        }
+      },
+      orderBy: (tasks, { asc }) => [asc(tasks.position)],
+    })
+  ]);
+
+  if (!membership || !board) {
+    notFound();
+  }
 
   return (
     <div className="flex flex-col h-full space-y-4">
@@ -68,7 +117,7 @@ async function BoardContent({ boardId }: { boardId: string }) {
         </div>
       </div>
 
-      <BoardWorkspace key={board.id} boardId={board.id} boardTags={board.tags || []} initialTasks={tasksData.data || []} boardColor={board.coverColor} />
+      <BoardWorkspace key={board.id} boardId={board.id} boardTags={board.tags || []} initialTasks={boardTasks || []} boardColor={board.coverColor} />
     </div>
   );
 }

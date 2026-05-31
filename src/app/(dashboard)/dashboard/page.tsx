@@ -11,7 +11,6 @@ import { redirect } from "next/navigation";
 import { CreateBoardDialog } from "@/components/boards/create-board-dialog";
 import { DashboardTiles } from "@/components/dashboard/dashboard-tiles";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
-import { getBoards } from "@/actions/board-actions";
 import { activityLogs } from "@/lib/db/schema";
 import { Suspense } from "react";
 import { SmartLink } from "@/components/ui/smart-link";
@@ -32,6 +31,9 @@ function formatTimeAgo(date: Date) {
 
 async function DashboardContent() {
   noStore();
+  
+  // Single session check — middleware already validated auth,
+  // so this is the only DB call for session we need
   const session = await auth.api.getSession({
     headers: await headers()
   });
@@ -40,9 +42,11 @@ async function DashboardContent() {
     redirect("/login");
   }
 
-  // 1. Fetch user boards with latest activity
+  const userId = session.user.id;
+
+  // Fetch user boards with latest activity — single query
   const memberships = await db.query.boardMembers.findMany({
-    where: eq(boardMembers.userId, session.user.id),
+    where: eq(boardMembers.userId, userId),
     with: {
       board: {
         with: {
@@ -64,18 +68,17 @@ async function DashboardContent() {
       }
       return board;
     })
-    .filter((b) => b && !b.deletedAt) // Filter out soft-deleted boards
+    .filter((b) => b && !b.deletedAt)
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
     
   const totalBoards = myBoards.length;
 
-  // 3. Fetch activity logs and tasks for all user boards
+  // Fetch tasks and activity logs in parallel — no redundant session calls
   let userTasks: any[] = [];
   let activities: any[] = [];
   if (myBoards.length > 0) {
     const boardIds = myBoards.map((b) => b.id);
     
-    // Fallback: If no tasks/activities are recorded yet, we fetch them empty
     const [fetchedTasks, fetchedActivities] = await Promise.all([
       db.query.tasks.findMany({
         where: and(
