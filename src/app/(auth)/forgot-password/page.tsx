@@ -27,8 +27,7 @@ export default function ForgotPasswordPage() {
       const authMethod = await checkEmailAuthMethod(email);
       
       if (!authMethod.exists) {
-        // Still say success to prevent email enumeration, but don't send anything
-        setIsSuccess(true);
+        toast.error("This account does not exist.");
         setIsLoading(false);
         return;
       }
