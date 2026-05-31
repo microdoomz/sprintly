@@ -60,12 +60,47 @@ export function TiltCard({
     setSpotlightStyle({});
   }, []);
 
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+      rafRef.current = requestAnimationFrame(() => {
+        const card = cardRef.current;
+        if (!card) return;
+
+        const rect = card.getBoundingClientRect();
+        const touch = e.touches[0];
+        
+        // Use document offset to handle scrolling
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / centerY) * -tiltMax;
+        const rotateY = ((x - centerX) / centerX) * tiltMax;
+
+        setTransform(
+          `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, ${scale})`
+        );
+
+        setSpotlightStyle({
+          background: `radial-gradient(600px circle at ${x}px ${y}px, ${glowColor}, transparent 40%)`,
+        });
+      });
+    },
+    [tiltMax, glowColor, scale]
+  );
+
   return (
     <div
       ref={cardRef}
       className={cn("tilt-card", className)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchMove}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleMouseLeave}
       style={{ transform }}
     >
       <div className="tilt-spotlight" style={spotlightStyle} />

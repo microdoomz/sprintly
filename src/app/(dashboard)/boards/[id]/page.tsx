@@ -15,18 +15,19 @@ import BoardLoading from "./loading";
 
 async function BoardContent({ boardId }: { boardId: string }) {
   noStore();
-  const { data: board, error: boardError } = await getBoardById(boardId);
+  const [boardResult, session, tasksData] = await Promise.all([
+    getBoardById(boardId),
+    auth.api.getSession({ headers: await headers() }),
+    getTasksForBoard(boardId)
+  ]);
+
+  const { data: board, error: boardError } = boardResult;
   
   if (boardError || !board) {
     notFound();
   }
 
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
   const currentUserId = session?.user?.id || "";
-
-  const tasksData = await getTasksForBoard(boardId);
 
   return (
     <div className="flex flex-col h-full space-y-4">
