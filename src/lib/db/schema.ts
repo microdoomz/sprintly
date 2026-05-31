@@ -22,6 +22,11 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const userAvatars = pgTable("user_avatars", {
+  userId: text("user_id").primaryKey().references(() => users.id, { onDelete: "cascade" }),
+  data: text("data").notNull(),
+});
+
 // ============================================================
 // Better Auth tables
 // ============================================================

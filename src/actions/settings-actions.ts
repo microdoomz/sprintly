@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { userAvatars, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
@@ -38,15 +38,26 @@ export async function updateAvatar(formData: FormData) {
     const buffer = Buffer.from(bytes);
     const base64 = buffer.toString("base64");
     const dataUrl = `data:${file.type};base64,${base64}`;
+    
+    // Store massive base64 in the dedicated user_avatars table
+    await db
+      .insert(userAvatars)
+      .values({ userId: session.user.id, data: dataUrl })
+      .onConflictDoUpdate({
+        target: userAvatars.userId,
+        set: { data: dataUrl }
+      });
 
+    // Store only the tiny API URL in the users table so get-session stays fast!
+    const avatarApiUrl = `/api/users/${session.user.id}/avatar`;
     await db
       .update(users)
-      .set({ image: dataUrl })
+      .set({ image: avatarApiUrl })
       .where(eq(users.id, session.user.id));
 
     revalidatePath("/settings");
     revalidatePath("/dashboard");
-    return { success: true, imageUrl: dataUrl };
+    return { success: true, imageUrl: avatarApiUrl };
   } catch (error: any) {
     console.error("Failed to update avatar:", error);
     return { error: "Failed to update avatar. Please try again." };
