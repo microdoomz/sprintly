@@ -76,45 +76,50 @@ async function DashboardContent() {
     const boardIds = myBoards.map((b) => b.id);
     
     // Fallback: If no tasks/activities are recorded yet, we fetch them empty
-    userTasks = await db.query.tasks.findMany({
-      where: and(
-        inArray(tasks.boardId, boardIds),
-        isNull(tasks.deletedAt)
-      ),
-      with: {
-        creator: {
-          columns: {
-            name: true,
-            image: true,
+    const [fetchedTasks, fetchedActivities] = await Promise.all([
+      db.query.tasks.findMany({
+        where: and(
+          inArray(tasks.boardId, boardIds),
+          isNull(tasks.deletedAt)
+        ),
+        with: {
+          creator: {
+            columns: {
+              name: true,
+              image: true,
+            },
+          },
+          board: {
+            columns: {
+              title: true,
+            },
           },
         },
-        board: {
-          columns: {
-            title: true,
+        orderBy: (tasks, { desc }) => [desc(tasks.createdAt)],
+        limit: 100,
+      }),
+      db.query.activityLogs.findMany({
+        where: inArray(activityLogs.boardId, boardIds),
+        with: {
+          user: {
+            columns: {
+              name: true,
+              image: true,
+            }
           },
+          board: {
+            columns: {
+              title: true,
+            }
+          }
         },
-      },
-      orderBy: (tasks, { desc }) => [desc(tasks.createdAt)],
-    });
+        orderBy: (activityLogs, { desc }) => [desc(activityLogs.createdAt)],
+        limit: 50,
+      })
+    ]);
 
-    activities = await db.query.activityLogs.findMany({
-      where: inArray(activityLogs.boardId, boardIds),
-      with: {
-        user: {
-          columns: {
-            name: true,
-            image: true,
-          }
-        },
-        board: {
-          columns: {
-            title: true,
-          }
-        }
-      },
-      orderBy: (activityLogs, { desc }) => [desc(activityLogs.createdAt)],
-      limit: 50,
-    });
+    userTasks = fetchedTasks;
+    activities = fetchedActivities;
   }
 
   return (

@@ -41,7 +41,7 @@ export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
     await signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/login");
+          window.location.href = "/login";
         },
       },
     });
