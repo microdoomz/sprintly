@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, LayoutDashboard, Zap, Shield, Users, ArrowUpR
 import { SmartLink } from "@/components/ui/smart-link";
 import { TransitionLink } from "@/components/ui/transition-link";
 import { TiltCard } from "@/components/ui/tilt-card";
+import { LandingMobileNav } from "@/components/layout/landing-mobile-nav";
 
 export default function Home() {
   return (
@@ -26,9 +27,10 @@ export default function Home() {
             <SmartLink href="/login" className="text-sm font-medium text-white/70 hover:text-white transition-colors px-0">
               Log In
             </SmartLink>
-            <SmartLink href="/register" className="h-9 px-4 py-2 inline-flex items-center justify-center whitespace-nowrap rounded-full bg-white text-black hover:bg-white/90 text-sm font-medium transition-colors">
+            <SmartLink href="/register" className="h-9 px-4 py-2 hidden md:inline-flex items-center justify-center whitespace-nowrap rounded-full bg-white text-black hover:bg-white/90 text-sm font-medium transition-colors">
               Get Started
             </SmartLink>
+            <LandingMobileNav />
           </div>
         </div>
       </nav>
