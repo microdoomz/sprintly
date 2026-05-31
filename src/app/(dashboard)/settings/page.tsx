@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { AvatarUpload } from "@/components/settings/avatar-upload";
+import { ThemeSettings } from "@/components/settings/theme-settings";
 
 export default async function SettingsPage() {
   const session = await auth.api.getSession({
@@ -51,17 +52,7 @@ export default async function SettingsPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Theme Preference</Label>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" className="w-full justify-start">
-                  Light
-                </Button>
-                <Button variant="outline" className="w-full justify-start border-primary">
-                  Dark
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  System
-                </Button>
-              </div>
+              <ThemeSettings />
             </div>
           </CardContent>
         </Card>

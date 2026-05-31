@@ -2,9 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from "nodemailer";
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
@@ -21,39 +19,51 @@ export const auth = betterAuth({
     enabled: true,
     async sendResetPassword({ url, user }: { url: string; user: any }) {
       try {
-        const { data, error } = await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL || "Sprintly <onboarding@resend.dev>",
-          to: user.email,
-          subject: "Reset your Sprintly password",
-          html: `
-            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 20px;">
-              <div style="text-align: center; margin-bottom: 32px;">
-                <h1 style="color: #0d9488; font-size: 24px; margin: 0;">Sprintly</h1>
+        const hasSmtpConfig = process.env.SMTP_HOST && process.env.SMTP_PORT && process.env.SMTP_USER && process.env.SMTP_PASS;
+        
+        if (hasSmtpConfig) {
+          const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: Number(process.env.SMTP_PORT),
+            secure: Number(process.env.SMTP_PORT) === 465,
+            auth: {
+              user: process.env.SMTP_USER,
+              pass: process.env.SMTP_PASS,
+            },
+          });
+
+          await transporter.sendMail({
+            from: process.env.SMTP_FROM || '"Sprintly" <noreply@sprintly.com>',
+            to: user.email,
+            subject: "Reset your Sprintly password",
+            html: `
+              <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 20px;">
+                <div style="text-align: center; margin-bottom: 32px;">
+                  <h1 style="color: #0d9488; font-size: 24px; margin: 0;">Sprintly</h1>
+                </div>
+                <h2 style="color: #111827; font-size: 20px; margin-bottom: 16px;">Reset your password</h2>
+                <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
+                  We received a request to reset your password. Click the button below to choose a new password.
+                </p>
+                <div style="text-align: center; margin-bottom: 24px;">
+                  <a href="${url}" style="display: inline-block; background-color: #0d9488; color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                    Reset Password
+                  </a>
+                </div>
+                <p style="color: #9ca3af; font-size: 12px; line-height: 1.5;">
+                  If you didn't request a password reset, you can safely ignore this email. This link will expire in 1 hour.
+                </p>
               </div>
-              <h2 style="color: #111827; font-size: 20px; margin-bottom: 16px;">Reset your password</h2>
-              <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
-                We received a request to reset your password. Click the button below to choose a new password.
-              </p>
-              <div style="text-align: center; margin-bottom: 24px;">
-                <a href="${url}" style="display: inline-block; background-color: #0d9488; color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
-                  Reset Password
-                </a>
-              </div>
-              <p style="color: #9ca3af; font-size: 12px; line-height: 1.5;">
-                If you didn't request a password reset, you can safely ignore this email. This link will expire in 1 hour.
-              </p>
-            </div>
-          `,
-        });
+            `,
+          });
+          console.log(`Password reset email sent to ${user.email} via SMTP.`);
+        } else {
+          console.log("\n⚠️ SMTP credentials not found in .env. Skipping real email delivery.");
+        }
         
         // Always log the reset link to terminal for easy local testing
         console.log(`\n🔑 PASSWORD RESET LINK FOR ${user.email}:\n${url}\n`);
 
-        if (error) {
-          console.error("Failed to send reset email via Resend:", error);
-        } else {
-          console.log(`Password reset email sent to ${user.email} via Resend.`);
-        }
       } catch (error) {
         console.error("Exception while sending reset email:", error);
         console.log(`\n🔑 Fallback - PASSWORD RESET LINK FOR ${user.email}:\n${url}\n`);

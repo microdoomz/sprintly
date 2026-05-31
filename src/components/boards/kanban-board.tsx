@@ -22,6 +22,15 @@ import { TaskCard, TaskType } from "@/components/tasks/task-card";
 import { updateTaskStatus } from "@/actions/task-actions";
 import { getPusherClient } from "@/lib/pusher/client";
 import { toast } from "sonner";
+import { useSession } from "@/lib/auth/auth-client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+interface ActiveEditor {
+  id: string;
+  name: string;
+  image: string | null;
+  timeoutId: NodeJS.Timeout;
+}
 
 interface KanbanBoardProps {
   boardId: string;
@@ -50,6 +59,64 @@ const dropAnimation: DropAnimation = {
 
 export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boardTags = [], boardColor }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<TaskType | null>(null);
+  const [activeEditors, setActiveEditors] = useState<Record<string, ActiveEditor>>({});
+  const { data: session } = useSession();
+  
+  useEffect(() => {
+    const pusher = getPusherClient();
+    if (!pusher) return;
+
+    const channelName = `private-board-${boardId}`;
+    let channel = pusher.channels.channels[channelName];
+    if (!channel) {
+      channel = pusher.subscribe(channelName);
+    }
+
+    const handleUserActivity = (data: { action: string; user: { id: string; name: string; image: string | null } }) => {
+      // Don't show our own activity
+      if (session?.user?.id && data.user.id === session.user.id) return;
+
+      setActiveEditors((prev) => {
+        const newEditors = { ...prev };
+        
+        if (data.action === "start") {
+          // Clear old timeout if exists
+          if (newEditors[data.user.id]?.timeoutId) {
+            clearTimeout(newEditors[data.user.id].timeoutId);
+          }
+          
+          // Set auto-remove after 10s of inactivity
+          const timeoutId = setTimeout(() => {
+            setActiveEditors((current) => {
+              const updated = { ...current };
+              delete updated[data.user.id];
+              return updated;
+            });
+          }, 10000);
+          
+          newEditors[data.user.id] = { ...data.user, timeoutId };
+        } else if (data.action === "end") {
+          if (newEditors[data.user.id]?.timeoutId) {
+            clearTimeout(newEditors[data.user.id].timeoutId);
+          }
+          delete newEditors[data.user.id];
+        }
+        
+        return newEditors;
+      });
+    };
+
+    channel.bind("user-activity", handleUserActivity);
+
+    return () => {
+      channel.unbind("user-activity", handleUserActivity);
+      // Clean up timeouts
+      setActiveEditors((prev) => {
+        Object.values(prev).forEach((editor) => clearTimeout(editor.timeoutId));
+        return {};
+      });
+    };
+  }, [boardId, session?.user?.id]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -71,7 +138,13 @@ export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boar
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const task = tasks.find((t) => t.id === active.id);
-    if (task) setActiveTask(task);
+    if (task) {
+      setActiveTask(task);
+      fetch("/api/pusher/activity", {
+        method: "POST",
+        body: JSON.stringify({ boardId, action: "start" }),
+      }).catch(console.error);
+    }
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -118,6 +191,11 @@ export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boar
 
   const handleDragEnd = async (event: DragEndEvent) => {
     setActiveTask(null);
+    fetch("/api/pusher/activity", {
+      method: "POST",
+      body: JSON.stringify({ boardId, action: "end" }),
+    }).catch(console.error);
+    
     const { active, over } = event;
     if (!over) return;
 
@@ -173,6 +251,29 @@ export function KanbanBoard({ boardId, tasks, setTasks, isFiltered = false, boar
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
+      {Object.values(activeEditors).length > 0 && (
+        <div className="flex items-center gap-2 mb-4 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex -space-x-2">
+            {Object.values(activeEditors).map((editor) => (
+              <Avatar key={editor.id} className="w-8 h-8 border-2 border-background shadow-sm">
+                <AvatarImage src={editor.image || ""} />
+                <AvatarFallback className="bg-primary/20 text-primary text-xs">
+                  {editor.name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            ))}
+          </div>
+          <span className="text-xs text-muted-foreground bg-secondary/50 px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm border border-border/50 backdrop-blur-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            {Object.values(activeEditors).length === 1 
+              ? `${Object.values(activeEditors)[0].name.split(" ")[0]} is moving a task...` 
+              : `${Object.values(activeEditors).length} people are moving tasks...`}
+          </span>
+        </div>
+      )}
       <div className="flex flex-col md:flex-row h-full gap-4 md:min-w-max pb-4">
         {COLUMNS.map((col) => (
           <KanbanColumn
