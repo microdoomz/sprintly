@@ -36,7 +36,7 @@ export function RecentActivity({ activities }: { activities: ActivityItem[] }) {
   const recentActivities = activities.slice(0, 5);
 
   return (
-    <Card className="col-span-3 flex flex-col">
+    <Card className="lg:col-span-3 flex flex-col">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Recent Activity</CardTitle>
