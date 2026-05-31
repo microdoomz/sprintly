@@ -144,8 +144,8 @@ async function DashboardContent() {
         <DashboardTiles tasks={userTasks} boards={myBoards} />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="lg:col-span-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 w-full min-w-0">
+        <Card className="lg:col-span-4 w-full min-w-0 overflow-hidden">
           <CardHeader>
             <CardTitle>Recent Boards</CardTitle>
             <CardDescription>
