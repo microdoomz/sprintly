@@ -10,8 +10,8 @@
 
 Sprintly is a Full-Stack Next.js application. Both the frontend and backend are deployed together on Vercel.
 
-- **Live Demo Link:** [Insert Vercel URL Here]
-- **GitHub Repository:** [Insert GitHub URL Here]
+- **Live Demo Link:** https://sprintly-one.vercel.app/
+- **GitHub Repository:** https://github.com/microdoomz/sprintly
 
 *(Note: Since Next.js API Routes and Server Actions act as the backend, deploying to Vercel satisfies both the mandatory frontend and optional backend deployment requirements in a single platform).*
 
